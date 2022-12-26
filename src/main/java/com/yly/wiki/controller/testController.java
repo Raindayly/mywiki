@@ -1,9 +1,14 @@
 package com.yly.wiki.controller;
 
+import com.yly.wiki.entity.Test;
+import com.yly.wiki.service.TestService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @version 1.0
@@ -21,8 +26,16 @@ public class testController {
     @Value("${test.hello:TEST}")
     private String hello;
 
+    @Resource
+    private TestService testService;
+
     @RequestMapping(value = "/hello",method = RequestMethod.GET)
     public String hello() {
         return "helloworld"+ hello;
+    }
+
+    @RequestMapping(value = "/list",method = RequestMethod.GET)
+    public List<Test> list() {
+        return testService.list();
     }
 }
