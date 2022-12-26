@@ -1,5 +1,6 @@
 package com.yly.wiki.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,8 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class testController {
 
+    /*
+    读取自定义配置项 :后面为默认值
+     */
+    @Value("${test.hello:TEST}")
+    private String hello;
+
     @RequestMapping(value = "/hello",method = RequestMethod.GET)
     public String hello() {
-        return "helloworld!";
+        return "helloworld!"+ hello;
     }
 }
