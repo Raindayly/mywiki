@@ -5,4 +5,4 @@ create table `test` (
     `password` varchar(50) comment '密码',
     primary key (`id`)
 ) engine = innodb default charset = utf8mb4 comment='测试';
-alter table test add `password` varchar(50) comment '密码'
+insert into `test` (`id`, `name`, `password`) values (1 , 'test' , '123')
