@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/demo")
-public class demoController {
+public class DemoController {
 
 
     @Resource

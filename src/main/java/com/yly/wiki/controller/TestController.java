@@ -18,7 +18,7 @@ import java.util.List;
  */
 //@Controller//一般用来返回网页
 @RestController
-public class testController {
+public class TestController {
 
     /*
     读取自定义配置项 :后面为默认值
