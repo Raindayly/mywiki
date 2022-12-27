@@ -1,6 +1,7 @@
 package com.yly.wiki.controller;
 
 import com.yly.wiki.entity.Ebook;
+import com.yly.wiki.resp.CommonResp;
 import com.yly.wiki.service.EbookService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,7 +20,9 @@ public class EbookController {
     private EbookService ebookService;
 
     @RequestMapping(value = "/list",method = RequestMethod.GET)
-    public List<Ebook> list() {
-        return ebookService.list();
+    public CommonResp list() {
+        CommonResp<List<Ebook>> resp = new CommonResp<>();
+        resp.setContent(ebookService.list());
+        return resp;
     }
 }
