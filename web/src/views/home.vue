@@ -95,6 +95,7 @@ export default defineComponent({
   name: 'Home',
   setup(){
     onMounted(() => {
+      listData.length = 0
       axios.get('/ebook/list').then((resp) => {
         listData.push(...resp.data.content)
       })

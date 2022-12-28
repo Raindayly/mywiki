@@ -12,11 +12,17 @@
           首页
         </router-link>
       </a-menu-item>
+      <a-menu-item key="/adminbook">
+        <router-link to="/adminbook">
+          电子书管理
+        </router-link>
+      </a-menu-item>
       <a-menu-item key="/about">
         <router-link to="/about">
           关于
         </router-link>
       </a-menu-item>
+
     </a-menu>
   </a-layout-header>
 </template>
