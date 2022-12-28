@@ -66,7 +66,7 @@
               </template>
               <a-list-item-meta :description="item.description">
                 <template #title>
-                  <a :href="item.href">{{ item.title }}</a>
+                  <a :href="item.href">{{ item.name }}</a>
                 </template>
                 <template #avatar><a-avatar :src="item.cover" /></template>
               </a-list-item-meta>
@@ -120,3 +120,12 @@ export default defineComponent({
   }
 });
 </script>
+
+<style scoped>
+  .ant-avatar {
+    border-radius: 10%;
+    width: 100px;
+    height: 100px;
+    line-height: 100px;
+  }
+</style>
