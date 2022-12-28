@@ -47,17 +47,67 @@
         </a-menu>
       </a-layout-sider>
       <a-layout-content :style="{ padding: '0 24px', minHeight: '280px' }">
-        Content
+        <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="listData">
+          <template #renderItem="{ item }">
+            <a-list-item key="item.title">
+              <template #actions>
+                <span v-for="{ type, text } in actions" :key="type">
+                  <component v-bind:is="type" style="margin-right: 8px" />
+                  {{ text }}
+                </span>
+              </template>
+              <a-list-item-meta :description="item.description">
+                <template #title>
+                  <a :href="item.href">{{ item.title }}</a>
+                </template>
+                <template #avatar><a-avatar :src="item.avatar" /></template>
+              </a-list-item-meta>
+              {{ item.content }}
+            </a-list-item>
+          </template>
+        </a-list>
       </a-layout-content>
     </a-layout>
   </a-layout-content>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
- // @ is an alias to /src
+import {defineComponent, onMounted, reactive, toRef} from 'vue';
+import { StarOutlined, LikeOutlined, MessageOutlined } from '@ant-design/icons-vue';
+import axios from 'axios'
+const listData: Record<string, string>[] = reactive([]);
+
 
 export default defineComponent({
+  components: {
+    StarOutlined,
+    LikeOutlined,
+    MessageOutlined,
+  },
   name: 'Home',
+  setup(){
+    onMounted(() => {
+      axios.get('/ebook/list?name=').then((resp) => {
+        listData.push(...resp.data.content)
+      })
+    })
+
+    const pagination = {
+      onChange: (page: number) => {
+        console.log(page);
+      },
+      pageSize: 2,
+    };
+    const actions: Record<string, string>[] = [
+      { type: 'StarOutlined', text: '156' },
+      { type: 'LikeOutlined', text: '156' },
+      { type: 'MessageOutlined', text: '2' },
+    ];
+    return {
+      listData,
+      pagination,
+      actions,
+    };
+  }
 });
 </script>
