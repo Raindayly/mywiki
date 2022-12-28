@@ -47,20 +47,28 @@
         </a-menu>
       </a-layout-sider>
       <a-layout-content :style="{ padding: '0 24px', minHeight: '280px' }">
-        <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="listData">
+        <a-list item-layout="vertical" size="large" :grid="{ gutter: 20, column: 3 }"  :data-source="listData">
           <template #renderItem="{ item }">
             <a-list-item key="item.title">
               <template #actions>
                 <span v-for="{ type, text } in actions" :key="type">
                   <component v-bind:is="type" style="margin-right: 8px" />
-                  {{ text }}
+                  <span v-if="type === 'StarOutlined'">
+                    {{ item.docCount }}
+                  </span>
+                  <span v-else-if="type === 'LikeOutlined'">
+                    {{ item.voteCount }}
+                  </span>
+                  <span v-else-if="type === 'MessageOutlined'">
+                    {{ item.viewCount }}
+                  </span>
                 </span>
               </template>
               <a-list-item-meta :description="item.description">
                 <template #title>
                   <a :href="item.href">{{ item.title }}</a>
                 </template>
-                <template #avatar><a-avatar :src="item.avatar" /></template>
+                <template #avatar><a-avatar :src="item.cover" /></template>
               </a-list-item-meta>
               {{ item.content }}
             </a-list-item>
@@ -87,7 +95,7 @@ export default defineComponent({
   name: 'Home',
   setup(){
     onMounted(() => {
-      axios.get('/ebook/list?name=').then((resp) => {
+      axios.get('/ebook/list').then((resp) => {
         listData.push(...resp.data.content)
       })
     })
@@ -99,7 +107,7 @@ export default defineComponent({
       pageSize: 2,
     };
     const actions: Record<string, string>[] = [
-      { type: 'StarOutlined', text: '156' },
+      { type: 'StarOutlined', text: '151' },
       { type: 'LikeOutlined', text: '156' },
       { type: 'MessageOutlined', text: '2' },
     ];
