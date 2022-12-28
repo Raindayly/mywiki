@@ -1,5 +1,6 @@
 package com.yly.wiki.service;
 
+import com.github.pagehelper.PageHelper;
 import com.yly.wiki.entity.Ebook;
 import com.yly.wiki.entity.EbookExample;
 import com.yly.wiki.mapper.EbookMapper;
@@ -24,6 +25,8 @@ public class EbookService {
     public List<EbookResp> list(EbookReq ebookReq) {
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
+
+        PageHelper.startPage(ebookReq.getPage(), ebookReq.getSize());
         if(!ObjectUtils.isEmpty(ebookReq.getName())) {
             criteria.andNameLike("%" + ebookReq.getName() + "%");
         }
