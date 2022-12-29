@@ -2,15 +2,16 @@ package com.yly.wiki.mapper;
 
 import com.yly.wiki.entity.Ebook;
 import com.yly.wiki.entity.EbookExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface EbookMapper {
     long countByExample(EbookExample example);
 
     int deleteByExample(EbookExample example);
 
-    int deleteByPrimaryKey(Long id);
+    int deleteByPrimaryKey(String id);
 
     int insert(Ebook record);
 
@@ -18,7 +19,7 @@ public interface EbookMapper {
 
     List<Ebook> selectByExample(EbookExample example);
 
-    Ebook selectByPrimaryKey(Long id);
+    Ebook selectByPrimaryKey(String id);
 
     int updateByExampleSelective(@Param("record") Ebook record, @Param("example") EbookExample example);
 

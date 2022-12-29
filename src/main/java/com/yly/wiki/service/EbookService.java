@@ -60,7 +60,7 @@ public class EbookService {
     public void save(EbookSaveReq req) {
         Ebook ebook = CopyUtil.copy(req, Ebook.class);
         if(ObjectUtils.isEmpty(req.getId())) {
-            ebook.setId(snowFlake.nextId());
+            ebook.setId(String.valueOf(snowFlake.nextId()));
             ebookMapper.insert(ebook);
         }else {
             ebookMapper.updateByPrimaryKey(ebook);
@@ -71,7 +71,7 @@ public class EbookService {
      * 删除
      * @param id
      */
-    public void delete(Long id) {
+    public void delete(String id) {
         ebookMapper.deleteByPrimaryKey(id);
     }
 }

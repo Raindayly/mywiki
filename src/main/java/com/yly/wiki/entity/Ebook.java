@@ -1,13 +1,13 @@
 package com.yly.wiki.entity;
 
 public class Ebook {
-    private Long id;
+    private String id;
 
     private String name;
 
-    private Long category1Id;
+    private String category1Id;
 
-    private Long category2Id;
+    private String category2Id;
 
     private String description;
 
@@ -19,11 +19,11 @@ public class Ebook {
 
     private Integer voteCount;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -35,19 +35,19 @@ public class Ebook {
         this.name = name;
     }
 
-    public Long getCategory1Id() {
+    public String getCategory1Id() {
         return category1Id;
     }
 
-    public void setCategory1Id(Long category1Id) {
+    public void setCategory1Id(String category1Id) {
         this.category1Id = category1Id;
     }
 
-    public Long getCategory2Id() {
+    public String getCategory2Id() {
         return category2Id;
     }
 
-    public void setCategory2Id(Long category2Id) {
+    public void setCategory2Id(String category2Id) {
         this.category2Id = category2Id;
     }
 
