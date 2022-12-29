@@ -158,7 +158,9 @@ export default defineComponent({
         } else {
           message.error(data.message);
         }
-      });
+      }).catch(() => {
+        modalLoading.value = false;
+      })
     };
 
     /**
