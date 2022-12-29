@@ -46,3 +46,22 @@ insert into ebook (id, name, description) values (3, 'python 入门教程','零�
 insert into ebook (id, name, description) values (4 , 'Mysql 入门教程', '零基础入门 Mysql 开发，企业级应用开发最佳首选框架');
 
 insert into ebook (id, name, description) values (5, 'Oracle 入门教程', '零基础入门 Oracle 开发，企业级应用开发最佳首选框架');
+
+
+#分类表设计
+
+drop table if exists `category`;
+create table `category` (
+    `id` varchar(20) not null comment 'id',
+    `parent` varchar(20) not null default '0' comment '父id',
+    `name` varchar(50) not null comment '名称',
+    `sort` int comment '顺序',
+    primary key (`id`)
+) engine=innodb default charset=utf8mb4 comment='分类';
+
+insert into `category` (id, parent, name, sort) values ('100','000','前端开发',100);
+insert into `category` (id, parent, name, sort) values ('101','100','vue',101);
+insert into `category` (id, parent, name, sort) values ('102','100','html & css',102);
+insert into `category` (id, parent, name, sort) values ('200','000','Java',200);
+insert into `category` (id, parent, name, sort) values ('201','200','基础',201);
+insert into `category` (id, parent, name, sort) values ('202','200','框架',202);
