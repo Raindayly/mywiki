@@ -1,35 +1,39 @@
 <template>
-  <a-table :columns="columns"
-           :data-source="listData"
-           :rowKey="record => record.id"
-           :loading="loading"
-           :pagination="pagination"
-           @change="handleTableChange"
-  >
-    <template #cover="{ text }">
-      <a>{{ text }}</a>
-    </template>
-    <template #customTitle>
+  <a-layout style="padding: 24px 0; background: #fff">
+    <a-layout-content
+        :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
+    >
+      <a-table :columns="columns"
+               :data-source="listData"
+               :rowKey="record => record.id"
+               :loading="loading"
+               :pagination="pagination"
+               @change="handleTableChange"
+      >
+        <template #cover="{ text }">
+          <a>{{ text }}</a>
+        </template>
+        <template #customTitle>
       <span>
         封面
       </span>
-    </template>
-    <template #docCount="{ text }">
+        </template>
+        <template #docCount="{ text }">
       <span>
         {{ text }}
       </span>
-    </template>
-    <template #viewCount="{ text }">
+        </template>
+        <template #viewCount="{ text }">
       <span>
         {{ text }}
       </span>
-    </template>
-    <template #voteCount="{ text }">
+        </template>
+        <template #voteCount="{ text }">
       <span>
         {{ text }}
       </span>
-    </template>
-    <template #tags="{ text: tags }">
+        </template>
+        <template #tags="{ text: tags }">
       <span>
         <a-tag
             v-for="tag in tags"
@@ -39,15 +43,16 @@
           {{ tag.toUpperCase() }}
         </a-tag>
       </span>
-    </template>
-    <template #action="{ text, record }">
-      <a-space>
-        <a-button type="primary" @click="edit(record)">编辑</a-button>
-        <a-button type="primary" danger>删除</a-button>
-      </a-space>
-    </template>
-  </a-table>
-
+        </template>
+        <template #action="{ text, record }">
+          <a-space>
+            <a-button type="primary" @click="edit(record)">编辑</a-button>
+            <a-button type="primary" danger>删除</a-button>
+          </a-space>
+        </template>
+      </a-table>
+    </a-layout-content>
+  </a-layout>
   <a-modal
       title="电子书表单"
       v-model:visible="modalVisible"
@@ -56,10 +61,10 @@
   >
     <a-form :model="ebook" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
       <a-form-item label="封面">
-        <a-input v-model:value="ebook.cover" />
+        <a-input v-model:value="ebook.cover"/>
       </a-form-item>
       <a-form-item label="名称">
-        <a-input v-model:value="ebook.name" />
+        <a-input v-model:value="ebook.name"/>
       </a-form-item>
       <a-form-item label="分类">
         <a-cascader
@@ -69,7 +74,7 @@
         />
       </a-form-item>
       <a-form-item label="描述">
-        <a-input v-model:value="ebook.description" type="textarea" />
+        <a-input v-model:value="ebook.description" type="textarea"/>
       </a-form-item>
     </a-form>
   </a-modal>
@@ -78,14 +83,14 @@
 <script lang="ts">
 import {defineComponent, onMounted, reactive, ref} from 'vue';
 import axios from "axios";
-import { message } from 'ant-design-vue';
+import {message} from 'ant-design-vue';
 import {Tool} from "@/util/tool";
 
 
 const columns = [
   {
     dataIndex: 'cover',
-    slots: { title: 'customTitle', customRender: 'cover' },
+    slots: {title: 'customTitle', customRender: 'cover'},
   },
   {
     title: '名称',
@@ -102,22 +107,22 @@ const columns = [
   {
     title: '文档数',
     dataIndex: 'docCount',
-    slots: { customRender: 'docCount' },
+    slots: {customRender: 'docCount'},
   },
   {
     title: '点赞数',
     dataIndex: 'voteCount',
-    slots: { customRender: 'voteCount' },
+    slots: {customRender: 'voteCount'},
   },
   {
     title: '阅读数',
     dataIndex: 'viewCount',
-    slots: { customRender: 'viewCount' },
+    slots: {customRender: 'viewCount'},
   },
   {
     title: '操作',
     key: 'action',
-    slots: { customRender: 'action' },
+    slots: {customRender: 'action'},
   },
 ];
 
@@ -172,6 +177,14 @@ export default defineComponent({
       categoryIds.value = [ebook.value.category1Id, ebook.value.category2Id]
     };
 
+    /**
+     * 新增
+     */
+    const add = () => {
+      modalVisible.value = true;
+      ebook.value = {}
+    }
+
     // const level1 =  ref();
     // let categorys: any;
     // /**
@@ -215,7 +228,7 @@ export default defineComponent({
         pagination.value.total = data.content.total
       })
     }
-    const handleTableChange = (pagination :any) => {
+    const handleTableChange = (pagination: any) => {
       handleQuery({
         page: pagination.current,
         size: pagination.pageSize
@@ -236,6 +249,7 @@ export default defineComponent({
       handleTableChange,
 
       edit,
+      add,
 
       ebook,
       modalVisible,
@@ -245,8 +259,7 @@ export default defineComponent({
       // level1,
     };
   },
-  components: {
-  },
+  components: {},
 });
 </script>
 
