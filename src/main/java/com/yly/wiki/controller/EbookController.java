@@ -9,6 +9,7 @@ import com.yly.wiki.service.EbookService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 
 @RestController
@@ -20,7 +21,7 @@ public class EbookController {
     private EbookService ebookService;
 
     @RequestMapping(value = "/list",method = RequestMethod.GET)
-    public CommonResp list(EbookQueryReq ebookReq) {
+    public CommonResp list(@Valid EbookQueryReq ebookReq) {
         CommonResp<PageResp<EbookResp>> resp = new CommonResp<>();
         resp.setContent(ebookService.list(ebookReq));
         return resp;
