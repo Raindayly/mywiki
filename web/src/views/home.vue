@@ -78,10 +78,10 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, reactive, toRef} from 'vue';
+import {defineComponent, onMounted, reactive, ref, toRef} from 'vue';
 import { StarOutlined, LikeOutlined, MessageOutlined } from '@ant-design/icons-vue';
 import axios from 'axios'
-const listData: Record<string, string>[] = reactive([]);
+import {message} from "ant-design-vue";
 
 
 export default defineComponent({
@@ -92,29 +92,38 @@ export default defineComponent({
   },
   name: 'Home',
   setup(){
+
+    const listData = ref([]);
+
+    const pagination = ref({
+      current: 1,
+      pageSize: 1000
+    });
+
+    const handleQuery =  (params: any) =>{
+      axios.get('/ebook/list',{params}).then((resp) => {
+        const data = resp.data
+        if(data.success) {
+          listData.value = data.content.list
+        }else {
+          message.error(data.message)
+        }
+      })
+    }
+
     onMounted(() => {
-      listData.length = 0
-      axios.get('/ebook/list').then((resp) => {
-        listData.push(...resp.data.content.list)
+      handleQuery({
+        page: 1,
+        size: pagination.value.pageSize
       })
     })
 
-    const pagination = {
-      onChange: (page: number) => {
-        console.log(page);
-      },
-      pageSize: 2,
-    };
-    const actions: Record<string, string>[] = [
-      { type: 'StarOutlined', text: '151' },
-      { type: 'LikeOutlined', text: '156' },
-      { type: 'MessageOutlined', text: '2' },
-    ];
     return {
       listData,
       pagination,
-      actions,
     };
+
+
   }
 });
 </script>

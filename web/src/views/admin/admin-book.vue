@@ -212,7 +212,9 @@ export default defineComponent({
      */
     const search = () => {
       handleQuery({
-          name: searchForm.value.name
+        name: searchForm.value.name,
+        page: 1,
+        size: pagination.value.pageSize
       })
     }
 
@@ -291,13 +293,17 @@ export default defineComponent({
       axios.get('/ebook/list', {
         params
       }).then((resp) => {
-        const data = resp.data
         loading.value = false
-        listData.value = data.content.list
+        const data = resp.data
+        if(data.success) {
+          listData.value = data.content.list
 
-        //重置分页按钮
-        pagination.value.current = params.page
-        pagination.value.total = data.content.total
+          //重置分页按钮
+          pagination.value.current = params.page
+          pagination.value.total = data.content.total
+        }else {
+          message.error(data.message)
+        }
       })
     }
     const handleTableChange = (pagination: any) => {
