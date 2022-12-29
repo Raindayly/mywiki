@@ -47,7 +47,14 @@
           <template #action="{ text, record }">
             <a-space>
               <a-button type="primary" @click="edit(record)">编辑</a-button>
-              <a-button type="primary" danger>删除</a-button>
+              <a-popconfirm
+                  title="请确定是否需要删除"
+                  ok-text="是"
+                  cancel-text="否"
+                  @confirm="handleDel(record.id)"
+              >
+                <a-button type="primary" danger>删除</a-button>
+              </a-popconfirm>
             </a-space>
           </template>
         </a-table>
@@ -186,6 +193,30 @@ export default defineComponent({
       ebook.value = {}
     }
 
+    /**
+     * 删除
+     */
+    const handleDel = (id: string) => {
+      axios.delete(`/ebook/delete/${id}`).then(res=>{
+        const data = res.data
+        if(data.success){
+          message.success("删除成功!")
+
+          /**
+           * 刷新页面
+           */
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize,
+          })
+        }else {
+          message.error("删除失败!")
+        }
+      }).catch(err=>{
+        message.error(err)
+      })
+    }
+
     // const level1 =  ref();
     // let categorys: any;
     // /**
@@ -251,6 +282,7 @@ export default defineComponent({
 
       edit,
       add,
+      handleDel,
 
       ebook,
       modalVisible,
