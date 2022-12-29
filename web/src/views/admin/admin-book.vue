@@ -3,6 +3,8 @@
            :data-source="listData"
            :rowKey="record => record.id"
            :loading="loading"
+           :pagination="pagination"
+           @change="handleTableChange"
   >
     <template #cover="{ text }">
       <a>{{ text }}</a>
@@ -104,12 +106,16 @@ export default defineComponent({
 
     const handleQuery = (params: any) => {
       loading.value = true
-      axios.get('/ebook/list', params).then((resp) => {
+      axios.get('/ebook/list', {
+        params
+      }).then((resp) => {
+        const data = resp.data
         loading.value = false
-        listData.value = resp.data.content
+        listData.value = data.content.list
 
         //重置分页按钮
         pagination.value.current = params.page
+        pagination.value.total = data.content.total
       })
     }
     const handleTableChange = (pagination :any) => {
@@ -119,7 +125,10 @@ export default defineComponent({
       })
     }
     onMounted(() => {
-      handleQuery({})
+      handleQuery({
+        page: 1,
+        size: pagination.value.pageSize
+      })
     })
     return {
       loading,
