@@ -5,25 +5,25 @@ import javax.validation.constraints.NotNull;
 
 public class PageReq {
     @NotNull(message = "[当前页数]不能为空")
-    private int page;
+    private Integer page;
 
     @NotNull(message = "[每页条数]不能为空")
     @Max(value = 1000,message = "[每页条数]最多不超过1000")
-    private int size;
+    private Integer size;
 
-    public int getPage() {
+    public Integer getPage() {
         return page;
     }
 
-    public void setPage(int page) {
+    public void setPage(Integer page) {
         this.page = page;
     }
 
-    public int getSize() {
+    public Integer getSize() {
         return size;
     }
 
-    public void setSize(int size) {
+    public void setSize(Integer size) {
         this.size = size;
     }
 
