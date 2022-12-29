@@ -2,7 +2,25 @@
   <a-layout style="padding: 24px 0; background: #fff">
     <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
       <a-space direction="vertical" style="width: 100%">
-        <a-button type="primary" @click="add">新增</a-button>
+        <a-form
+            layout="inline"
+            :model="formState"
+            @finish="handleFinish"
+            @finishFailed="handleFinishFailed"
+        >
+          <a-form-item>
+            <a-input v-model:value="searchForm.name" placeholder="搜索名称"></a-input>
+          </a-form-item>
+          <a-form-item>
+            <a-button type="primary" @click="search">搜索</a-button>
+          </a-form-item>
+          <a-form-item>
+            <a-button type="primary" @click="reset">重置</a-button>
+          </a-form-item>
+          <a-form-item>
+            <a-button type="primary" @click="add">新增</a-button>
+          </a-form-item>
+        </a-form>
         <a-table :columns="columns"
                  :data-source="listData"
                  :rowKey="record => record.id"
@@ -145,6 +163,10 @@ export default defineComponent({
       total: 0
     })
 
+    const searchForm = ref({
+      name: ''
+    })
+
     // -------- 表单 ---------
     /**
      * 数组，[100, 101]对应：前端开发 / Vue
@@ -184,6 +206,24 @@ export default defineComponent({
       ebook.value = Tool.copy(record);
       categoryIds.value = [ebook.value.category1Id, ebook.value.category2Id]
     };
+
+    /**
+     * 搜索
+     */
+    const search = () => {
+      handleQuery({
+          name: searchForm.value.name
+      })
+    }
+
+    /**
+     * 重置
+     */
+    const reset = () => {
+      handleQuery({
+        name: ''
+      })
+    }
 
     /**
      * 新增
@@ -279,6 +319,10 @@ export default defineComponent({
       columns,
       pagination,
       handleTableChange,
+
+      searchForm,
+      search,
+      reset,
 
       edit,
       add,
