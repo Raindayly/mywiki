@@ -5,7 +5,8 @@ import com.github.pagehelper.PageInfo;
 import com.yly.wiki.entity.Ebook;
 import com.yly.wiki.entity.EbookExample;
 import com.yly.wiki.mapper.EbookMapper;
-import com.yly.wiki.req.EbookReq;
+import com.yly.wiki.req.EbookQueryReq;
+import com.yly.wiki.req.EbookSaveReq;
 import com.yly.wiki.resp.EbookResp;
 import com.yly.wiki.resp.PageResp;
 import com.yly.wiki.util.CopyUtil;
@@ -24,7 +25,7 @@ public class EbookService {
     private EbookMapper ebookMapper;
 
 
-    public PageResp<EbookResp> list(EbookReq ebookReq) {
+    public PageResp<EbookResp> list(EbookQueryReq ebookReq) {
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
 
@@ -46,5 +47,18 @@ public class EbookService {
         pageResp.setList(respList);
         pageResp.setTotal(ebookPageInfo.getTotal());
         return pageResp;
+    }
+
+    /**
+     * 保存
+     * @param req
+     */
+    public void save(EbookSaveReq req) {
+        Ebook ebook = CopyUtil.copy(req, Ebook.class);
+        if(ObjectUtils.isEmpty(req.getId())) {
+            ebookMapper.insert(ebook);
+        }else {
+            ebookMapper.updateByPrimaryKey(ebook);
+        }
     }
 }
