@@ -1,56 +1,57 @@
 <template>
   <a-layout style="padding: 24px 0; background: #fff">
-    <a-layout-content
-        :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
-    >
-      <a-table :columns="columns"
-               :data-source="listData"
-               :rowKey="record => record.id"
-               :loading="loading"
-               :pagination="pagination"
-               @change="handleTableChange"
-      >
-        <template #cover="{ text }">
-          <a>{{ text }}</a>
-        </template>
-        <template #customTitle>
-      <span>
-        封面
-      </span>
-        </template>
-        <template #docCount="{ text }">
-      <span>
-        {{ text }}
-      </span>
-        </template>
-        <template #viewCount="{ text }">
-      <span>
-        {{ text }}
-      </span>
-        </template>
-        <template #voteCount="{ text }">
-      <span>
-        {{ text }}
-      </span>
-        </template>
-        <template #tags="{ text: tags }">
-      <span>
-        <a-tag
-            v-for="tag in tags"
-            :key="tag"
-            :color="tag === 'loser' ? 'volcano' : tag.length > 5 ? 'geekblue' : 'green'"
+    <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
+      <a-space direction="vertical" style="width: 100%">
+        <a-button type="primary" @click="add">新增</a-button>
+        <a-table :columns="columns"
+                 :data-source="listData"
+                 :rowKey="record => record.id"
+                 :loading="loading"
+                 :pagination="pagination"
+                 @change="handleTableChange"
         >
-          {{ tag.toUpperCase() }}
-        </a-tag>
-      </span>
-        </template>
-        <template #action="{ text, record }">
-          <a-space>
-            <a-button type="primary" @click="edit(record)">编辑</a-button>
-            <a-button type="primary" danger>删除</a-button>
-          </a-space>
-        </template>
-      </a-table>
+          <template #cover="{ text }">
+            <a>{{ text }}</a>
+          </template>
+          <template #customTitle>
+        <span>
+          封面
+        </span>
+          </template>
+          <template #docCount="{ text }">
+        <span>
+          {{ text }}
+        </span>
+          </template>
+          <template #viewCount="{ text }">
+        <span>
+          {{ text }}
+        </span>
+          </template>
+          <template #voteCount="{ text }">
+        <span>
+          {{ text }}
+        </span>
+          </template>
+          <template #tags="{ text: tags }">
+        <span>
+          <a-tag
+              v-for="tag in tags"
+              :key="tag"
+              :color="tag === 'loser' ? 'volcano' : tag.length > 5 ? 'geekblue' : 'green'"
+          >
+            {{ tag.toUpperCase() }}
+          </a-tag>
+        </span>
+          </template>
+          <template #action="{ text, record }">
+            <a-space>
+              <a-button type="primary" @click="edit(record)">编辑</a-button>
+              <a-button type="primary" danger>删除</a-button>
+            </a-space>
+          </template>
+        </a-table>
+      </a-space>
     </a-layout-content>
   </a-layout>
   <a-modal
@@ -147,8 +148,8 @@ export default defineComponent({
     const modalLoading = ref(false);
     const handleModalOk = () => {
       modalLoading.value = true;
-      ebook.value.category1Id = categoryIds.value[0];
-      ebook.value.category2Id = categoryIds.value[1];
+      // ebook.value.category1Id = categoryIds.value[0];
+      // ebook.value.category2Id = categoryIds.value[1];
       axios.post("/ebook/save", ebook.value).then((response) => {
         modalLoading.value = false;
         const data = response.data; // data = commonResp
