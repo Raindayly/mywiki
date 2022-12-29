@@ -49,7 +49,7 @@
       <a-layout-content :style="{ padding: '0 24px', minHeight: '280px' }">
         <a-list item-layout="vertical" size="large" :grid="{ gutter: 20, column: 3 }"  :data-source="listData">
           <template #renderItem="{ item }">
-            <a-list-item key="item.title">
+            <a-list-item :key="item.title">
               <template #actions>
                   <span>
                     <component v-bind:is="'FileOutlined'" style="margin-right: 8px" />
@@ -97,7 +97,7 @@ export default defineComponent({
     onMounted(() => {
       listData.length = 0
       axios.get('/ebook/list').then((resp) => {
-        listData.push(...resp.data.content)
+        listData.push(...resp.data.content.list)
       })
     })
 
