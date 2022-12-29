@@ -51,18 +51,18 @@
           <template #renderItem="{ item }">
             <a-list-item key="item.title">
               <template #actions>
-                <span v-for="{ type, text } in actions" :key="type">
-                  <component v-bind:is="type" style="margin-right: 8px" />
-                  <span v-if="type === 'StarOutlined'">
+                  <span>
+                    <component v-bind:is="'FileOutlined'" style="margin-right: 8px" />
                     {{ item.docCount }}
                   </span>
-                  <span v-else-if="type === 'LikeOutlined'">
-                    {{ item.voteCount }}
-                  </span>
-                  <span v-else-if="type === 'MessageOutlined'">
+                  <span>
+                    <component v-bind:is="'UserOutlined'" style="margin-right: 8px" />
                     {{ item.viewCount }}
                   </span>
-                </span>
+                  <span>
+                    <component v-bind:is="'LikeOutlined'" style="margin-right: 8px" />
+                    {{ item.voteCount }}
+                  </span>
               </template>
               <a-list-item-meta :description="item.description">
                 <template #title>
