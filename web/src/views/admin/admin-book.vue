@@ -222,8 +222,10 @@ export default defineComponent({
      * 重置
      */
     const reset = () => {
+      searchForm.value.name = ''
       handleQuery({
-        name: ''
+        page: 1,
+        size: pagination.value.pageSize
       })
     }
 
@@ -291,7 +293,12 @@ export default defineComponent({
     const handleQuery = (params: any) => {
       loading.value = true
       axios.get('/ebook/list', {
-        params
+        params:{
+          name: searchForm.value.name,
+          page: params.page,
+          size: params.size
+        }
+
       }).then((resp) => {
         loading.value = false
         const data = resp.data
