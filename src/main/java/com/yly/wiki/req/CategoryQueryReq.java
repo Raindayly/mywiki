@@ -1,6 +1,6 @@
 package com.yly.wiki.req;
 
-public class CategoryQueryReq extends PageReq {
+public class CategoryQueryReq {
     private String id;
 
     private String parent;
@@ -48,6 +48,6 @@ public class CategoryQueryReq extends PageReq {
                 ", parent='" + parent + '\'' +
                 ", name='" + name + '\'' +
                 ", sort=" + sort +
-                "} " + super.toString();
+                "} " ;
     }
 }

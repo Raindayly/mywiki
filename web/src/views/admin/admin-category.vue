@@ -23,7 +23,7 @@
                  :data-source="listData"
                  :rowKey="record => record.id"
                  :loading="loading"
-                 :pagination="pagination"
+                 :pagination="false"
                  @change="handleTableChange"
         >
           <template #action="{ text, record }">
@@ -99,12 +99,6 @@ export default defineComponent({
   setup() {
     const loading = ref(false)
     const listData = ref()
-    const pagination = ref({
-      current: 1,
-      pageSize: 2,
-      total: 0
-    })
-
     const searchForm = ref({
       name: ''
     })
@@ -128,10 +122,7 @@ export default defineComponent({
           modalVisible.value = false;
 
           // 重新加载列表
-          handleQuery({
-            page: pagination.value.current,
-            size: pagination.value.pageSize,
-          });
+          handleQuery();
         } else {
           message.error(data.message);
         }
@@ -153,11 +144,7 @@ export default defineComponent({
      * 搜索
      */
     const search = () => {
-      handleQuery({
-        name: searchForm.value.name,
-        page: 1,
-        size: pagination.value.pageSize
-      })
+      handleQuery()
     }
 
     /**
@@ -165,10 +152,7 @@ export default defineComponent({
      */
     const reset = () => {
       searchForm.value.name = ''
-      handleQuery({
-        page: 1,
-        size: pagination.value.pageSize
-      })
+      handleQuery()
     }
 
     /**
@@ -183,22 +167,19 @@ export default defineComponent({
      * 删除
      */
     const handleDel = (id: string) => {
-      axios.delete(`/category/delete/${id}`).then(res=>{
+      axios.delete(`/category/delete/${id}`).then(res => {
         const data = res.data
-        if(data.success){
+        if (data.success) {
           message.success("删除成功!")
 
           /**
            * 刷新页面
            */
-          handleQuery({
-            page: pagination.value.current,
-            size: pagination.value.pageSize,
-          })
-        }else {
+          handleQuery()
+        } else {
           message.error("删除失败!")
         }
-      }).catch(err=>{
+      }).catch(err => {
         message.error(err)
       })
     }
@@ -232,47 +213,34 @@ export default defineComponent({
     //   });
     // };
 
-    const handleQuery = (params: any) => {
+    const handleQuery = () => {
       loading.value = true
       axios.get('/category/list', {
-        params:{
-          name: searchForm.value.name,
-          page: params.page,
-          size: params.size
+        params: {
+          name: searchForm.value.name
         }
 
       }).then((resp) => {
         loading.value = false
         const data = resp.data
-        if(data.success) {
-          listData.value = data.content.list
-
-          //重置分页按钮
-          pagination.value.current = params.page
-          pagination.value.total = data.content.total
-        }else {
+        if (data.success) {
+          listData.value = data.content
+        } else {
           message.error(data.message)
         }
       })
     }
     const handleTableChange = (pagination: any) => {
-      handleQuery({
-        page: pagination.current,
-        size: pagination.pageSize
-      })
+      handleQuery()
     }
     onMounted(() => {
       // handleQueryCategory()
-      handleQuery({
-        page: 1,
-        size: pagination.value.pageSize,
-      });
+      handleQuery();
     })
     return {
       loading,
       listData,
       columns,
-      pagination,
       handleTableChange,
 
       searchForm,
@@ -288,7 +256,6 @@ export default defineComponent({
       modalLoading,
       handleModalOk,
       categoryIds,
-      // level1,
     };
   },
   components: {},

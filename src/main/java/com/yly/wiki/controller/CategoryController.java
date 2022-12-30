@@ -2,14 +2,14 @@ package com.yly.wiki.controller;
 
 import com.yly.wiki.req.CategoryQueryReq;
 import com.yly.wiki.req.CategorySaveReq;
-import com.yly.wiki.resp.CommonResp;
 import com.yly.wiki.resp.CategoryResp;
-import com.yly.wiki.resp.PageResp;
+import com.yly.wiki.resp.CommonResp;
 import com.yly.wiki.service.CategoryService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.List;
 
 
 @RestController
@@ -22,7 +22,7 @@ public class CategoryController {
 
     @RequestMapping(value = "/list",method = RequestMethod.GET)
     public CommonResp list(@Valid CategoryQueryReq categoryReq) {
-        CommonResp<PageResp<CategoryResp>> resp = new CommonResp<>();
+        CommonResp<List<CategoryResp>> resp = new CommonResp<>();
         resp.setContent(categoryService.list(categoryReq));
         return resp;
     }
