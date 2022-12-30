@@ -17,6 +17,11 @@
           电子书管理
         </router-link>
       </a-menu-item>
+      <a-menu-item key="/category">
+        <router-link to="/category">
+          类目管理
+        </router-link>
+      </a-menu-item>
       <a-menu-item key="/about">
         <router-link to="/about">
           关于
