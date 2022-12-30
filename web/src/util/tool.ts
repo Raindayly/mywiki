@@ -70,4 +70,31 @@ export class Tool {
 
     return uuid.join('');
   }
+
+  /**
+   * 递归将数组转换为树形结构
+   * 父ID属性为parent
+   */
+  public static arrayToTree (array:Array<any>, parentId:any) {
+    if(Tool.isEmpty(array)){
+      return []
+    }
+    const result = []
+    for (let i = 0; i < array.length; i++) {
+      const c = array[i]
+
+      if(Number(c.parent) === Number(parentId)) {
+        result.push(c)
+
+        //递归查看当前的子节点
+        const children = Tool.arrayToTree(array, c.id)
+        if(Tool.isNotEmpty(children)) {
+          c.children = children
+        }
+
+      }
+    }
+
+    return result
+  }
 }
