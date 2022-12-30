@@ -1,13 +1,13 @@
 package com.yly.wiki.req;
 
 public class EbookQueryReq extends PageReq{
-    private Long id;
+    private String id;
 
     private String name;
 
-    private Long category1Id;
+    private String category1Id;
 
-    private Long category2Id;
+    private String category2Id;
 
     private String description;
 
@@ -19,11 +19,11 @@ public class EbookQueryReq extends PageReq{
 
     private Integer voteCount;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

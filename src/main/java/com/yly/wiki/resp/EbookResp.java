@@ -1,13 +1,13 @@
 package com.yly.wiki.resp;
 
 public class EbookResp {
-    private Long id;
+    private String  id;
 
     private String name;
 
-    private Long category1Id;
+    private String category1Id;
 
-    private Long category2Id;
+    private String category2Id;
 
     private String description;
 
@@ -19,12 +19,20 @@ public class EbookResp {
 
     private Integer voteCount;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
+    }
+
+    public void setCategory1Id(String category1Id) {
+        this.category1Id = category1Id;
+    }
+
+    public void setCategory2Id(String category2Id) {
+        this.category2Id = category2Id;
     }
 
     public String getName() {
@@ -33,22 +41,6 @@ public class EbookResp {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Long getCategory1Id() {
-        return category1Id;
-    }
-
-    public void setCategory1Id(Long category1Id) {
-        this.category1Id = category1Id;
-    }
-
-    public Long getCategory2Id() {
-        return category2Id;
-    }
-
-    public void setCategory2Id(Long category2Id) {
-        this.category2Id = category2Id;
     }
 
     public String getDescription() {
