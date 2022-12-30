@@ -4,9 +4,7 @@
       <a-space direction="vertical" style="width: 100%">
         <a-form
             layout="inline"
-            :model="formState"
-            @finish="handleFinish"
-            @finishFailed="handleFinishFailed"
+            :model="searchForm"
         >
           <a-form-item>
             <a-input v-model:value="searchForm.name" placeholder="搜索名称"></a-input>
