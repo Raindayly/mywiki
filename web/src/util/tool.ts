@@ -75,7 +75,7 @@ export class Tool {
    * 递归将数组转换为树形结构
    * 父ID属性为parent
    */
-  public static arrayToTree (array:Array<any>, parentId:any) {
+  public static arrayToTree (array:any, parentId:any) {
     if(Tool.isEmpty(array)){
       return []
     }
