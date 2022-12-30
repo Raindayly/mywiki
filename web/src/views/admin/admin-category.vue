@@ -20,7 +20,7 @@
           </a-form-item>
         </a-form>
         <a-table :columns="columns"
-                 :data-source="listData"
+                 :data-source="level1"
                  :rowKey="record => record.id"
                  :loading="loading"
                  :pagination="false"
@@ -72,24 +72,23 @@ import {Tool} from "@/util/tool";
 
 const columns = [
   {
-    dataIndex: 'cover',
-    slots: {title: 'customTitle', customRender: 'cover'},
-  },
-  {
     title: '名称',
     dataIndex: 'name',
   },
   {
     title: '父分类',
     dataIndex: 'parent',
+    width: '10%',
   },
   {
     title: '顺序',
     dataIndex: 'sort',
+    width: '10%',
   },
   {
     title: '操作',
     key: 'action',
+    width: '20%',
     slots: {customRender: 'action'},
   },
 ];
@@ -102,6 +101,20 @@ export default defineComponent({
     const searchForm = ref({
       name: ''
     })
+
+    /**
+     * 一级分类树，children属性就是二级分类
+     * [{
+     *   id: "",
+     *   name: "",
+     *   children: [{
+     *     id: "",
+     *     name: "",
+     *   }]
+     * }]
+     */
+    const level1 = ref(); // 一级分类树，children属性就是二级分类
+    level1.value = [];
 
     // -------- 表单 ---------
     /**
@@ -225,6 +238,8 @@ export default defineComponent({
         const data = resp.data
         if (data.success) {
           listData.value = data.content
+          level1.value = []
+          level1.value = Tool.arrayToTree(data.content,'0')
         } else {
           message.error(data.message)
         }
@@ -239,7 +254,9 @@ export default defineComponent({
     })
     return {
       loading,
-      listData,
+      // listData,
+      level1,
+
       columns,
       handleTableChange,
 
