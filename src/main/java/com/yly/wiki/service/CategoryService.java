@@ -1,13 +1,18 @@
 package com.yly.wiki.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.yly.wiki.entity.Category;
 import com.yly.wiki.entity.CategoryExample;
 import com.yly.wiki.mapper.CategoryMapper;
 import com.yly.wiki.req.CategoryQueryReq;
 import com.yly.wiki.req.CategorySaveReq;
 import com.yly.wiki.resp.CategoryResp;
+import com.yly.wiki.resp.PageResp;
 import com.yly.wiki.util.CopyUtil;
 import com.yly.wiki.util.SnowFlake;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -19,6 +24,8 @@ import java.util.List;
 public class CategoryService {
 
 
+    private static final Logger LOG = LoggerFactory.getLogger(CategoryService.class);
+
     @Resource
     private CategoryMapper categoryMapper;
 
@@ -26,21 +33,35 @@ public class CategoryService {
     private SnowFlake snowFlake;
 
 
-    public List<CategoryResp> list(CategoryQueryReq categoryReq) {
+    public PageResp<CategoryResp> list(CategoryQueryReq req) {
         CategoryExample categoryExample = new CategoryExample();
+        categoryExample.setOrderByClause("sort asc");
         CategoryExample.Criteria criteria = categoryExample.createCriteria();
-
-        if(!ObjectUtils.isEmpty(categoryReq.getName())) {
-            criteria.andNameLike("%" + categoryReq.getName() + "%");
-        }
-
+        PageHelper.startPage(req.getPage(), req.getSize());
         List<Category> categoryList = categoryMapper.selectByExample(categoryExample);
 
-        //格式化返回信息
-        List<CategoryResp> respList = CopyUtil.copyList(categoryList, CategoryResp.class);
+        PageInfo<Category> pageInfo = new PageInfo<>(categoryList);
+        LOG.info("总行数：{}", pageInfo.getTotal());
+        LOG.info("总页数：{}", pageInfo.getPages());
 
+        // List<CategoryResp> respList = new ArrayList<>();
+        // for (Category category : categoryList) {
+        //     // CategoryResp categoryResp = new CategoryResp();
+        //     // BeanUtils.copyProperties(category, categoryResp);
+        //     // 对象复制
+        //     CategoryResp categoryResp = CopyUtil.copy(category, CategoryResp.class);
+        //
+        //     respList.add(categoryResp);
+        // }
 
-        return respList;
+        // 列表复制
+        List<CategoryResp> list = CopyUtil.copyList(categoryList, CategoryResp.class);
+
+        PageResp<CategoryResp> pageResp = new PageResp();
+        pageResp.setTotal(pageInfo.getTotal());
+        pageResp.setList(list);
+
+        return pageResp;
     }
 
     /**
@@ -63,5 +84,17 @@ public class CategoryService {
      */
     public void delete(String id) {
         categoryMapper.deleteByPrimaryKey(id);
+    }
+
+    public List<CategoryResp> all() {
+        CategoryExample categoryExample = new CategoryExample();
+        categoryExample.setOrderByClause("sort asc");
+        List<Category> categoryList = categoryMapper.selectByExample(categoryExample);
+
+        // 列表复制
+        List<CategoryResp> list = CopyUtil.copyList(categoryList, CategoryResp.class);
+        
+        return list;
+
     }
 }

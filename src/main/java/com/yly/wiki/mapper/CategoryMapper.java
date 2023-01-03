@@ -2,8 +2,9 @@ package com.yly.wiki.mapper;
 
 import com.yly.wiki.entity.Category;
 import com.yly.wiki.entity.CategoryExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface CategoryMapper {
     long countByExample(CategoryExample example);

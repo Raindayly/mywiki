@@ -1,6 +1,6 @@
 package com.yly.wiki.req;
 
-public class CategoryQueryReq {
+public class CategoryQueryReq extends PageReq {
     private String id;
 
     private String parent;
