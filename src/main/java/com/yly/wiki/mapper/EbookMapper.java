@@ -2,9 +2,8 @@ package com.yly.wiki.mapper;
 
 import com.yly.wiki.entity.Ebook;
 import com.yly.wiki.entity.EbookExample;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 public interface EbookMapper {
     long countByExample(EbookExample example);

@@ -39,6 +39,10 @@ public class EbookService {
             criteria.andNameLike("%" + ebookReq.getName() + "%");
         }
 
+        if (!ObjectUtils.isEmpty(ebookReq.getCategory2Id())) {
+            criteria.andCategory2IdEqualTo(ebookReq.getCategory2Id());
+        }
+
         List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
         //获取分页信息
         PageInfo<Ebook> ebookPageInfo = new PageInfo<>(ebookList);

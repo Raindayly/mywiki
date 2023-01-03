@@ -27,6 +27,14 @@ public class EbookQueryReq extends PageReq{
         this.id = id;
     }
 
+    public String getCategory2Id() {
+        return category2Id;
+    }
+
+    public void setCategory2Id(String category2Id) {
+        this.category2Id = category2Id;
+    }
+
     public String getName() {
         return name;
     }
