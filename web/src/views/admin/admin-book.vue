@@ -83,27 +83,28 @@
     </a-layout-content>
   </a-layout>
   <a-modal
-      title="电子书表单"
+      title="电子书"
       v-model:visible="modalVisible"
       :confirm-loading="modalLoading"
       @ok="handleModalOk"
   >
-    <a-form :model="ebook" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+    <a-form :model="ebook" :label-col="{ span: 4 }" :wrapper-col="{ span: 18 }">
       <a-form-item label="封面">
-        <a-input v-model:value="ebook.cover"/>
+        <a-input v-model:value="ebook.cover" placeholder="请输入封面" />
       </a-form-item>
       <a-form-item label="名称">
-        <a-input v-model:value="ebook.name"/>
+        <a-input v-model:value="ebook.name" placeholder="请输入名称" />
       </a-form-item>
       <a-form-item label="分类">
         <a-cascader
             v-model:value="categoryIds"
             :field-names="{ label: 'name', value: 'id', children: 'children' }"
             :options="level1"
+            placeholder="请选择分类"
         />
       </a-form-item>
       <a-form-item label="描述">
-        <a-input v-model:value="ebook.description" type="textarea"/>
+        <a-input v-model:value="ebook.description" type="textarea" placeholder="请输入描述"/>
       </a-form-item>
     </a-form>
   </a-modal>
@@ -235,6 +236,7 @@ export default defineComponent({
     const add = () => {
       modalVisible.value = true;
       ebook.value = {}
+      categoryIds.value = []
     }
 
     /**
