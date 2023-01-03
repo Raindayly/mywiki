@@ -34,6 +34,11 @@
           封面
         </span>
           </template>
+          <template #categorys="{ record }">
+            <span>
+              {{ getCategoryName(record.category1Id) }} / {{ getCategoryName(record.category2Id) }}
+            </span>
+          </template>
           <template #docCount="{ text }">
         <span>
           {{ text }}
@@ -121,12 +126,9 @@ const columns = [
     dataIndex: 'name',
   },
   {
-    title: '分类1',
-    dataIndex: 'category1Id',
-  },
-  {
-    title: '分类2',
-    dataIndex: 'category2Id',
+    title: '分类',
+    dataIndex: 'categorys',
+    slots: {customRender: 'categorys'}
   },
   {
     title: '文档数',
@@ -175,8 +177,8 @@ export default defineComponent({
     const modalLoading = ref(false);
     const handleModalOk = () => {
       modalLoading.value = true;
-      // ebook.value.category1Id = categoryIds.value[0];
-      // ebook.value.category2Id = categoryIds.value[1];
+      ebook.value.category1Id = categoryIds.value[0];
+      ebook.value.category2Id = categoryIds.value[1];
       axios.post("/ebook/save", ebook.value).then((response) => {
         modalLoading.value = false;
         const data = response.data; // data = commonResp
@@ -239,9 +241,9 @@ export default defineComponent({
      * 删除
      */
     const handleDel = (id: string) => {
-      axios.delete(`/ebook/delete/${id}`).then(res=>{
+      axios.delete(`/ebook/delete/${id}`).then(res => {
         const data = res.data
-        if(data.success){
+        if (data.success) {
           message.success("删除成功!")
 
           /**
@@ -251,47 +253,59 @@ export default defineComponent({
             page: pagination.value.current,
             size: pagination.value.pageSize,
           })
-        }else {
+        } else {
           message.error("删除失败!")
         }
-      }).catch(err=>{
+      }).catch(err => {
         message.error(err)
       })
     }
 
-    // const level1 =  ref();
-    // let categorys: any;
-    // /**
-    //  * 查询所有分类
-    //  **/
-    // const handleQueryCategory = () => {
-    //   loading.value = true;
-    //   axios.get("/category/all").then((response) => {
-    //     loading.value = false;
-    //     const data = response.data;
-    //     if (data.success) {
-    //       categorys = data.content;
-    //       console.log("原始数组：", categorys);
-    //
-    //       level1.value = [];
-    //       level1.value = Tool.array2Tree(categorys, 0);
-    //       console.log("树形结构：", level1.value);
-    //
-    //       // 加载完分类后，再加载电子书，否则如果分类树加载很慢，则电子书渲染会报错
-    //       handleQuery({
-    //         page: 1,
-    //         size: pagination.value.pageSize,
-    //       });
-    //     } else {
-    //       message.error(data.message);
-    //     }
-    //   });
-    // };
+    const level1 = ref();
+    let categorys: any;
+    /**
+     * 查询所有分类
+     **/
+    const handleQueryCategory = () => {
+      loading.value = true;
+      axios.get("/category/all").then((response) => {
+        loading.value = false;
+        const data = response.data;
+        if (data.success) {
+          categorys = data.content;
+          console.log("原始数组：", categorys);
+
+          level1.value = [];
+          level1.value = Tool.array2Tree(categorys, 0);
+          console.log("树形结构：", level1.value);
+
+          // 加载完分类后，再加载电子书，否则如果分类树加载很慢，则电子书渲染会报错
+          handleQuery({
+            page: 1,
+            size: pagination.value.pageSize,
+          });
+        } else {
+          message.error(data.message);
+        }
+      });
+    };
+
+    const getCategoryName = (cid: number) => {
+      // console.log(cid)
+      let result = "";
+      categorys.forEach((item: any) => {
+        if (item.id === cid) {
+          // return item.name; // 注意，这里直接return不起作用
+          result = item.name;
+        }
+      });
+      return result;
+    };
 
     const handleQuery = (params: any) => {
       loading.value = true
       axios.get('/ebook/list', {
-        params:{
+        params: {
           name: searchForm.value.name,
           page: params.page,
           size: params.size
@@ -300,13 +314,13 @@ export default defineComponent({
       }).then((resp) => {
         loading.value = false
         const data = resp.data
-        if(data.success) {
+        if (data.success) {
           listData.value = data.content.list
 
           //重置分页按钮
           pagination.value.current = params.page
           pagination.value.total = data.content.total
-        }else {
+        } else {
           message.error(data.message)
         }
       })
@@ -318,11 +332,7 @@ export default defineComponent({
       })
     }
     onMounted(() => {
-      // handleQueryCategory()
-      handleQuery({
-        page: 1,
-        size: pagination.value.pageSize,
-      });
+      handleQueryCategory()
     })
     return {
       loading,
@@ -330,6 +340,8 @@ export default defineComponent({
       columns,
       pagination,
       handleTableChange,
+      handleQueryCategory,
+      getCategoryName,
 
       searchForm,
       search,
@@ -344,7 +356,7 @@ export default defineComponent({
       modalLoading,
       handleModalOk,
       categoryIds,
-      // level1,
+      level1,
     };
   },
   components: {},

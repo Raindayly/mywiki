@@ -27,6 +27,14 @@ public class EbookResp {
         this.id = id;
     }
 
+    public String getCategory1Id() {
+        return category1Id;
+    }
+
+    public String getCategory2Id() {
+        return category2Id;
+    }
+
     public void setCategory1Id(String category1Id) {
         this.category1Id = category1Id;
     }
