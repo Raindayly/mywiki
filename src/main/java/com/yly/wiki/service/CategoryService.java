@@ -86,6 +86,9 @@ public class CategoryService {
         categoryMapper.deleteByPrimaryKey(id);
     }
 
+    /**
+     * 查询所有分类
+     */
     public List<CategoryResp> all() {
         CategoryExample categoryExample = new CategoryExample();
         categoryExample.setOrderByClause("sort asc");
