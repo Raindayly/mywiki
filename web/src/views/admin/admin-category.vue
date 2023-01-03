@@ -35,7 +35,7 @@
     </a-layout-content>
   </a-layout>
   <a-modal
-      title="电子书表单"
+      title="类别表单"
       v-model:visible="modalVisible"
       :confirm-loading="modalLoading"
       @ok="handleModalOk"
