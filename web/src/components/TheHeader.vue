@@ -12,13 +12,13 @@
           首页
         </router-link>
       </a-menu-item>
-      <a-menu-item key="/adminbook">
-        <router-link to="/adminbook">
+      <a-menu-item key="/admin/ebook">
+        <router-link to="/admin/ebook">
           电子书管理
         </router-link>
       </a-menu-item>
-      <a-menu-item key="/category">
-        <router-link to="/category">
+      <a-menu-item key="/admin/category">
+        <router-link to="/admin/category">
           类别管理
         </router-link>
       </a-menu-item>
