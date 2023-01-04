@@ -19,7 +19,7 @@
       </a-menu-item>
       <a-menu-item key="/category">
         <router-link to="/category">
-          类目管理
+          类别管理
         </router-link>
       </a-menu-item>
       <a-menu-item key="/about">
