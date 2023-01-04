@@ -1,17 +1,19 @@
-package com.yly.wiki.req;
+package com.yly.wiki.resp;
 
-import javax.validation.constraints.NotNull;
-
-public class CategorySaveReq {
+public class DocResp {
     private String id;
 
-    @NotNull(message = "[父级]不能为空")
+    private String ebookId;
+
     private String parent;
 
-    @NotNull(message = "[名称]不能为空")
     private String name;
 
     private Integer sort;
+
+    private Integer viewCount;
+
+    private Integer voteCount;
 
     public String getId() {
         return id;
@@ -19,6 +21,14 @@ public class CategorySaveReq {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getEbookId() {
+        return ebookId;
+    }
+
+    public void setEbookId(String ebookId) {
+        this.ebookId = ebookId;
     }
 
     public String getParent() {
@@ -45,6 +55,22 @@ public class CategorySaveReq {
         this.sort = sort;
     }
 
+    public Integer getViewCount() {
+        return viewCount;
+    }
+
+    public void setViewCount(Integer viewCount) {
+        this.viewCount = viewCount;
+    }
+
+    public Integer getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(Integer voteCount) {
+        this.voteCount = voteCount;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -52,9 +78,12 @@ public class CategorySaveReq {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
+        sb.append(", ebookId=").append(ebookId);
         sb.append(", parent=").append(parent);
         sb.append(", name=").append(name);
         sb.append(", sort=").append(sort);
+        sb.append(", viewCount=").append(viewCount);
+        sb.append(", voteCount=").append(voteCount);
         sb.append("]");
         return sb.toString();
     }
