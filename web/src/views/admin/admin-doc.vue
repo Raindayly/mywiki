@@ -45,24 +45,34 @@
         <a-input v-model:value="doc.name"/>
       </a-form-item>
       <a-form-item label="父文档">
-        <a-select
-            ref="select"
+        <a-tree-select
             v-model:value="doc.parent"
+            style="width: 100%"
+            :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+            :tree-data="selectTreeData"
+            placeholder="Please select"
+            tree-default-expand-all
+            :replaceFields="{title:'name',key:'id',value:'id'}"
         >
-          <a-select-option
-              value="000"
-          >
-            无
-          </a-select-option>
-          <a-select-option
-            v-for="item in level1"
-            :key="item.id"
-            :value="item.id"
-            :disabled="doc.id === item.id"
-          >
-            {{ item.name }}
-          </a-select-option>
-        </a-select>
+        </a-tree-select>
+<!--        <a-select-->
+<!--            ref="select"-->
+<!--            v-model:value="doc.parent"-->
+<!--        >-->
+<!--          <a-select-option-->
+<!--              value="000"-->
+<!--          >-->
+<!--            无-->
+<!--          </a-select-option>-->
+<!--          <a-select-option-->
+<!--            v-for="item in level1"-->
+<!--            :key="item.id"-->
+<!--            :value="item.id"-->
+<!--            :disabled="doc.id === item.id"-->
+<!--          >-->
+<!--            {{ item.name }}-->
+<!--          </a-select-option>-->
+<!--        </a-select>-->
       </a-form-item>
       <a-form-item label="排序">
         <a-input v-model:value="doc.sort"/>
@@ -128,8 +138,9 @@ export default defineComponent({
     /**
      * 数组，[100, 101]对应：前端开发 / Vue
      */
-    const docIds = ref();
     const doc = ref();
+    const selectTreeData = ref()
+    selectTreeData.value = []
     const modalVisible = ref(false);
     const modalLoading = ref(false);
     const handleModalOk = () => {
@@ -158,7 +169,11 @@ export default defineComponent({
     const edit = (record: any) => {
       modalVisible.value = true;
       doc.value = Tool.copy(record);
-      docIds.value = [doc.value.doc1Id, doc.value.doc2Id]
+      selectTreeData.value = Tool.copy(level1.value)
+
+      banTreeNode(selectTreeData.value , record.id)
+
+      selectTreeData.value.unshift({id: 0, name: '无'});
     };
 
     /**
@@ -223,12 +238,45 @@ export default defineComponent({
     const handleTableChange = (pagination: any) => {
       handleQuery()
     }
+
+    /**
+     * 给树形选择添加disable，不能选自身级自身的子层级为父级
+     */
+    const banTreeNode = (source: any, id: string ) => {
+      for (let i = 0; i < source.length; i++) {
+        let node = source[i]
+        if(node.id === id){
+          //如果当前节点是要找的节点
+          node.disabled = true
+
+          const children = node.children
+          if(Tool.isNotEmpty(children)){
+            for (let j = 0; j < children.length; j++) {
+              banTreeNode(children, children[j].id)
+            }
+          }
+        }else {
+          // 如果当前节点不是目标节点，则到其子节点再找找看。
+          const children = node.children;
+          if (Tool.isNotEmpty(children)) {
+            banTreeNode(children, id)
+          }
+        }
+
+      }
+
+
+
+
+    }
+
     onMounted(() => {
       handleQuery();
     })
     return {
       loading,
       // listData,
+      selectTreeData,
       level1,
 
       columns,
@@ -246,7 +294,6 @@ export default defineComponent({
       modalVisible,
       modalLoading,
       handleModalOk,
-      docIds,
     };
   },
   components: {},
