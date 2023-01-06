@@ -210,7 +210,9 @@ export default defineComponent({
      * 删除
      */
     const handleDel = (id: string) => {
-      axios.delete(`/doc/delete/${id}`).then(res => {
+      const delIds =  delTreeNode(level1.value , id)
+      console.log(delIds)
+      axios.delete('/doc/delete/'+ delIds.join(',')).then(res => {
         const data = res.data
         if (data.success) {
           message.success("删除成功!")
@@ -271,10 +273,42 @@ export default defineComponent({
         }
 
       }
+    }
 
+    /**
+     * 删除树节点本身及子节点，将逻辑放在前端，减少服务器压力
+     * @param source 树节点数据
+     * @param id 需要删除的树节点
+     * @return delIds 删除的树节点id数组
+     */
+    const delTreeNode = (source: any, id: string ):string[] => {
+      console.log(source)
+      console.log(id)
+      const delIds: string[] = []
+      const recursion = (source: any,id: string) => {
+        for (let i = 0; i < source.length; i++) {
+          let node = source[i]
+          if(node.id === id){
+            //如果当前节点是要找的节点
+            delIds.push(id)
 
-
-
+            console.log(delIds)
+            const children = node.children
+            if(Tool.isNotEmpty(children)){
+              for (let j = 0; j < children.length; j++) {
+                recursion(children, children[j].id)
+              }
+            }
+          }else {
+            const children = node.children
+            if(Tool.isNotEmpty(children)){
+              recursion(children, id)
+            }
+          }
+        }
+        return delIds
+      }
+      return recursion(source,id)
     }
 
     onMounted(() => {
