@@ -55,39 +55,39 @@
             :replaceFields="{title:'name',key:'id',value:'id'}"
         >
         </a-tree-select>
-<!--        <a-select-->
-<!--            ref="select"-->
-<!--            v-model:value="doc.parent"-->
-<!--        >-->
-<!--          <a-select-option-->
-<!--              value="000"-->
-<!--          >-->
-<!--            无-->
-<!--          </a-select-option>-->
-<!--          <a-select-option-->
-<!--            v-for="item in level1"-->
-<!--            :key="item.id"-->
-<!--            :value="item.id"-->
-<!--            :disabled="doc.id === item.id"-->
-<!--          >-->
-<!--            {{ item.name }}-->
-<!--          </a-select-option>-->
-<!--        </a-select>-->
       </a-form-item>
       <a-form-item label="排序">
         <a-input v-model:value="doc.sort"/>
+      </a-form-item>
+      <a-form-item label="内容">
+        <div style="border: 1px solid #ccc">
+          <Toolbar
+              style="border-bottom: 1px solid #ccc"
+              :editor="editorRef"
+              :defaultConfig="toolbarConfig"
+              :mode="mode"
+          />
+          <Editor
+              style="height: 500px; overflow-y: hidden;"
+              v-model="valueHtml"
+              :defaultConfig="editorConfig"
+              :mode="mode"
+              @onCreated="handleCreated"
+          />
+        </div>
       </a-form-item>
     </a-form>
   </a-modal>
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, reactive, ref} from 'vue';
+import {defineComponent, onMounted, reactive, ref, shallowRef} from 'vue';
 import axios from "axios";
 import {message} from 'ant-design-vue';
 import {Tool} from "@/util/tool";
 import {useRoute} from "vue-router";
-
+import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
+import '@wangeditor/editor/dist/css/style.css' // 引入 css
 
 const columns = [
   {
@@ -114,6 +114,7 @@ const columns = [
 
 export default defineComponent({
   name: "admin-book",
+  components: { Editor, Toolbar },
   setup() {
     const route = useRoute();
     const loading = ref(false)
@@ -121,6 +122,21 @@ export default defineComponent({
     const searchForm = ref({
       name: ''
     })
+
+    /**
+     * 富文本
+     */
+    // 编辑器实例，必须用 shallowRef
+    const editorRef = shallowRef()
+    // 内容 HTML
+    const valueHtml = ref('<p>hello</p>')
+
+    const toolbarConfig = {}
+    const editorConfig = { placeholder: '请输入内容...' }
+
+    const handleCreated = (editor: any) => {
+      editorRef.value = editor // 记录 editor 实例，重要！
+    }
 
     /**
      * 一级文档树，children属性就是二级文档
@@ -310,6 +326,14 @@ export default defineComponent({
 
     onMounted(() => {
       handleQuery();
+
+      /**
+       * 富文本
+       */
+      setTimeout(() => {
+        valueHtml.value = '<p>模拟 Ajax 异步设置内容</p>'
+      }, 1500)
+
     })
     return {
       loading,
@@ -332,9 +356,16 @@ export default defineComponent({
       modalVisible,
       modalLoading,
       handleModalOk,
+
+      //富文本
+      editorRef,
+      valueHtml,
+      mode: 'default', // 或 'simple'
+      toolbarConfig,
+      editorConfig,
+      handleCreated
     };
   },
-  components: {},
 });
 </script>
 
