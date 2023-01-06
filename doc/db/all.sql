@@ -83,13 +83,13 @@ create table if not exists wikidev.`doc`
 
 insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('1','1','0', 'Assembly',1, 602442845, 32797968);
 insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('2', '1','1','Lisp', 1,44, 6731794);
-insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('3','1','0', 'WebAssembly',1, 883, 700310);
-insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('4','1','0', 'Hack',1, 593876661, 309);
-insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('5','1','0', 'NATURAL', 1,758210704, 4608924);
-insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('6','1','0', 'Ada',1, 983018, 4);
-insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('7','1','0', 'Tcl', 1,2, 531);
-insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('8', '1','0','COBOL',1, 34011360, 7470560);
-insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('9','1','0', 'ABAP', 1,5199437, 603);
+insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('3','1','1', 'WebAssembly',1, 883, 700310);
+insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('4','1','1', 'Hack',1, 593876661, 309);
+insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('5','1','1', 'NATURAL', 1,758210704, 4608924);
+insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('6','1','1', 'Ada',1, 983018, 4);
+insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('7','1','1', 'Tcl', 1,2, 531);
+insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('8', '1','1','COBOL',1, 34011360, 7470560);
+insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('9','1','1', 'ABAP', 1,5199437, 603);
 insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('10','1','0', 'SPARK', 1,33, 95393250);
 insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('11','1','10', 'SPARK', 1,79145, 5503174);
 insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('12','1','10', 'Perl',1, 4090, 609870217);
