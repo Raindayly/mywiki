@@ -86,6 +86,7 @@ import {defineComponent, onMounted, reactive, ref} from 'vue';
 import axios from "axios";
 import {message} from 'ant-design-vue';
 import {Tool} from "@/util/tool";
+import {useRoute} from "vue-router";
 
 
 const columns = [
@@ -114,6 +115,7 @@ const columns = [
 export default defineComponent({
   name: "admin-book",
   setup() {
+    const route = useRoute();
     const loading = ref(false)
     const listData = ref()
     const searchForm = ref({
@@ -196,7 +198,12 @@ export default defineComponent({
      */
     const add = () => {
       modalVisible.value = true;
-      doc.value = {}
+      doc.value = {
+        ebookId: route.query.ebookId
+      }
+      selectTreeData.value = Tool.copy(level1.value)
+
+      selectTreeData.value.unshift({id: 0, name: '无'});
     }
 
     /**
