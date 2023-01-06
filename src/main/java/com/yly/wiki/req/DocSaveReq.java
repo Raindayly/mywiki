@@ -17,9 +17,9 @@ public class DocSaveReq {
     @NotNull(message = "[排序]不能为空")
     private Integer sort;
 
-    private Integer viewCount;
+    private Integer viewCount = 0;
 
-    private Integer voteCount;
+    private Integer voteCount = 0;
 
     public String getId() {
         return id;
