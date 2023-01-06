@@ -101,3 +101,12 @@ insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`
 insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('18','1','10', 'bc', 1,11882180, 59981);
 insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('19','1','10', 'Tcl', 1,188267, 4663);
 insert into wikidev.`doc` (`id`,`ebook_id`, `parent`, `name`,`sort`,`view_count`, `vote_count`) values ('20','1','10', 'RPG', 1,43556, 369);
+
+
+#新增文档内容表
+
+create table if not exists wikidev.`content`
+(
+    `id` varchar(20) not null comment 'id' primary key,
+    `content` mediumtext not null comment '内容'
+) engine = innodb default charset = utf8mb4 comment '文档';
