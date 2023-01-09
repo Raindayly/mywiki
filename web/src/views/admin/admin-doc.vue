@@ -10,74 +10,91 @@
             <a-button type="primary" @click="add">新增</a-button>
           </a-form-item>
         </a-form>
-        <a-table :columns="columns"
+        <a-row :gutter="16">
+          <a-col :span="8">
+            <a-table :columns="columns"
                  :data-source="level1"
                  :rowKey="record => record.id"
                  :loading="loading"
                  :pagination="false"
                  @change="handleTableChange"
-        >
-          <template #action="{ text, record }">
-            <a-space>
-              <a-button type="primary" @click="edit(record)">编辑</a-button>
-              <a-popconfirm
-                  title="请确定是否需要删除"
-                  ok-text="是"
-                  cancel-text="否"
-                  @confirm="handleDel(record.id)"
-              >
-                <a-button type="primary" danger>删除</a-button>
-              </a-popconfirm>
-            </a-space>
-          </template>
-        </a-table>
+            >
+              <template #action="{ text, record }">
+                <a-space>
+                  <a-button type="primary" @click="edit(record)">编辑</a-button>
+                  <a-popconfirm
+                      title="请确定是否需要删除"
+                      ok-text="是"
+                      cancel-text="否"
+                      @confirm="handleDel(record.id)"
+                  >
+                    <a-button type="primary" danger>删除</a-button>
+                  </a-popconfirm>
+                </a-space>
+              </template>
+            </a-table>
+          </a-col>
+          <a-col :span="16">
+            <a-form :model="doc">
+              <a-form-item>
+                <a-input placeholder="请输入名称" v-model:value="doc.name"/>
+              </a-form-item>
+              <a-form-item>
+                <a-tree-select
+                    v-model:value="doc.parent"
+                    style="width: 100%"
+                    :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                    :tree-data="selectTreeData"
+                    placeholder="请选择父文档"
+                    tree-default-expand-all
+                    :replaceFields="{title:'name',key:'id',value:'id'}"
+                >
+                </a-tree-select>
+              </a-form-item>
+              <a-form-item>
+                <a-input placeholder="请输入排序" v-model:value="doc.sort"/>
+              </a-form-item>
+              <a-form-item>
+                <div style="border: 1px solid #ccc">
+                  <Toolbar
+                      style="border-bottom: 1px solid #ccc"
+                      :editor="editorRef"
+                      :defaultConfig="toolbarConfig"
+                      :mode="mode"
+                  />
+                  <Editor
+                      style="height: 500px; overflow-y: hidden;"
+                      v-model="valueHtml"
+                      :defaultConfig="editorConfig"
+                      :mode="mode"
+                      @onCreated="handleCreated"
+                  />
+                </div>
+              </a-form-item>
+
+            </a-form>
+            <a-row>
+              <a-col :span="8"/>
+              <a-col :span="8">
+                <a-affix :offset-bottom="top">
+                  <a-button block type="primary" @click="handleDocSave">保存</a-button>
+                </a-affix>
+              </a-col>
+              <a-col :span="8"/>
+            </a-row>
+
+          </a-col>
+        </a-row>
       </a-space>
     </a-layout-content>
   </a-layout>
-  <a-modal
-      title="类别表单"
-      v-model:visible="modalVisible"
-      :confirm-loading="modalLoading"
-      @ok="handleModalOk"
-  >
-    <a-form :model="doc" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
-      <a-form-item label="名称">
-        <a-input v-model:value="doc.name"/>
-      </a-form-item>
-      <a-form-item label="父文档">
-        <a-tree-select
-            v-model:value="doc.parent"
-            style="width: 100%"
-            :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-            :tree-data="selectTreeData"
-            placeholder="Please select"
-            tree-default-expand-all
-            :replaceFields="{title:'name',key:'id',value:'id'}"
-        >
-        </a-tree-select>
-      </a-form-item>
-      <a-form-item label="排序">
-        <a-input v-model:value="doc.sort"/>
-      </a-form-item>
-      <a-form-item label="内容">
-        <div style="border: 1px solid #ccc">
-          <Toolbar
-              style="border-bottom: 1px solid #ccc"
-              :editor="editorRef"
-              :defaultConfig="toolbarConfig"
-              :mode="mode"
-          />
-          <Editor
-              style="height: 500px; overflow-y: hidden;"
-              v-model="valueHtml"
-              :defaultConfig="editorConfig"
-              :mode="mode"
-              @onCreated="handleCreated"
-          />
-        </div>
-      </a-form-item>
-    </a-form>
-  </a-modal>
+<!--  <a-modal-->
+<!--      title="类别表单"-->
+<!--      v-model:visible="modalVisible"-->
+<!--      :confirm-loading="modalLoading"-->
+<!--      @ok="handleDocSave"-->
+<!--  >-->
+<!--  </a-modal>-->
 </template>
 
 <script lang="ts">
@@ -95,19 +112,13 @@ const columns = [
     dataIndex: 'name',
   },
   {
-    title: '父文档',
-    dataIndex: 'parent',
-    width: '10%',
-  },
-  {
     title: '顺序',
     dataIndex: 'sort',
-    width: '10%',
   },
   {
     title: '操作',
     key: 'action',
-    width: '20%',
+    fixed: 'right',
     slots: {customRender: 'action'},
   },
 ];
@@ -116,6 +127,7 @@ export default defineComponent({
   name: "admin-book",
   components: { Editor, Toolbar },
   setup() {
+    const top = ref<number>(10);
     const route = useRoute();
     const loading = ref(false)
     const listData = ref()
@@ -156,12 +168,13 @@ export default defineComponent({
     /**
      * 数组，[100, 101]对应：前端开发 / Vue
      */
-    const doc = ref();
+    const doc = ref()
+    doc.value = {}
     const selectTreeData = ref()
     selectTreeData.value = []
     const modalVisible = ref(false);
     const modalLoading = ref(false);
-    const handleModalOk = () => {
+    const handleDocSave = () => {
       modalLoading.value = true;
       // doc.value.doc1Id = docIds.value[0];
       // doc.value.doc2Id = docIds.value[1];
@@ -336,6 +349,7 @@ export default defineComponent({
 
     })
     return {
+      top,
       loading,
       // listData,
       selectTreeData,
@@ -355,7 +369,7 @@ export default defineComponent({
       doc,
       modalVisible,
       modalLoading,
-      handleModalOk,
+      handleDocSave,
 
       //富文本
       editorRef,
