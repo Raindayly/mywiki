@@ -41,6 +41,18 @@ public class DocController {
         return resp;
     }
 
+    /**
+     * @return resp
+     * 获取电子书对应的文档
+     */
+    @GetMapping("/ebook-docs/{ebookId}")
+    public CommonResp docs(@PathVariable String ebookId) {
+        CommonResp<List<DocResp>> resp = new CommonResp<>();
+        List<DocResp> list = docService.listByEbookId(ebookId);
+        resp.setContent(list);
+        return resp;
+    }
+
     @GetMapping("/content/{id}")
     public CommonResp list(@PathVariable String id) {
         CommonResp<Content> resp = new CommonResp<>();

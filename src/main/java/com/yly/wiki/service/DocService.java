@@ -83,6 +83,8 @@ public class DocService {
         if(!isHasDoc) {
             doc.setId(id);
             docMapper.insert(doc);
+            content.setId(id);
+            contentMapper.insert(content);
         }else {
             docMapper.updateByPrimaryKey(doc);
             if(!isHasContent) {
@@ -129,5 +131,17 @@ public class DocService {
 
     public Content findContent(String id) {
         return contentMapper.selectByPrimaryKey(id);
+    }
+
+    public List<DocResp> listByEbookId(String ebookId) {
+        DocExample docExample = new DocExample();
+        docExample.setOrderByClause("sort asc");
+        DocExample.Criteria criteria = docExample.createCriteria();
+        criteria.andEbookIdEqualTo(ebookId);
+        List<Doc> docs = docMapper.selectByExample(docExample);
+        // 列表复制
+        List<DocResp> list = CopyUtil.copyList(docs, DocResp.class);
+
+        return list;
     }
 }
