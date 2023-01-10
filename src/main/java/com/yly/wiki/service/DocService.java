@@ -2,8 +2,10 @@ package com.yly.wiki.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.yly.wiki.entity.Content;
 import com.yly.wiki.entity.Doc;
 import com.yly.wiki.entity.DocExample;
+import com.yly.wiki.mapper.ContentMapper;
 import com.yly.wiki.mapper.DocMapper;
 import com.yly.wiki.req.DocQueryReq;
 import com.yly.wiki.req.DocSaveReq;
@@ -28,6 +30,9 @@ public class DocService {
 
     @Resource
     private DocMapper docMapper;
+
+    @Resource
+    private ContentMapper contentMapper;
 
     @Resource
     private SnowFlake snowFlake;
@@ -70,11 +75,25 @@ public class DocService {
      */
     public void save(DocSaveReq req) {
         Doc doc = CopyUtil.copy(req, Doc.class);
-        if(ObjectUtils.isEmpty(req.getId())) {
-            doc.setId(String.valueOf(snowFlake.nextId()));
+        Content content = CopyUtil.copy(req, Content.class);
+        Boolean isHasDoc = !ObjectUtils.isEmpty(docMapper.selectByPrimaryKey(req.getId()));
+        Boolean isHasContent = !ObjectUtils.isEmpty(contentMapper.selectByPrimaryKey(req.getId()));
+        String id = String.valueOf(snowFlake.nextId());
+        //没有doc
+        if(!isHasDoc) {
+            doc.setId(id);
             docMapper.insert(doc);
         }else {
             docMapper.updateByPrimaryKey(doc);
+            if(!isHasContent) {
+                //有doc没有内容,要把doc的id给内容
+                content.setId(doc.getId());
+                contentMapper.insert(content);
+                return;
+            }else {
+                //有doc有内容,更新内容
+                contentMapper.updateByPrimaryKeyWithBLOBs(content);
+            }
         }
     }
 
@@ -106,5 +125,9 @@ public class DocService {
         
         return list;
 
+    }
+
+    public Content findContent(String id) {
+        return contentMapper.selectByPrimaryKey(id);
     }
 }

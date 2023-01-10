@@ -71,17 +71,17 @@
                   />
                 </div>
               </a-form-item>
-
+              <a-row>
+                <a-col :span="8"/>
+                <a-col :span="8">
+                  <a-affix :offset-bottom="top">
+                    <a-button block type="primary" @click="handleDocSave">保存</a-button>
+                  </a-affix>
+                </a-col>
+                <a-col :span="8"/>
+              </a-row>
             </a-form>
-            <a-row>
-              <a-col :span="8"/>
-              <a-col :span="8">
-                <a-affix :offset-bottom="top">
-                  <a-button block type="primary" @click="handleDocSave">保存</a-button>
-                </a-affix>
-              </a-col>
-              <a-col :span="8"/>
-            </a-row>
+
 
           </a-col>
         </a-row>
@@ -98,12 +98,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, reactive, ref, shallowRef} from 'vue';
+import {defineComponent, onBeforeUnmount, onMounted, reactive, ref, shallowRef} from 'vue';
 import axios from "axios";
 import {message} from 'ant-design-vue';
 import {Tool} from "@/util/tool";
 import {useRoute} from "vue-router";
-import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
+import { Editor, Toolbar, } from '@wangeditor/editor-for-vue'
+import { createEditor } from '@wangeditor/editor'
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
 
 const columns = [
@@ -141,7 +142,7 @@ export default defineComponent({
     // 编辑器实例，必须用 shallowRef
     const editorRef = shallowRef()
     // 内容 HTML
-    const valueHtml = ref('<p>hello</p>')
+    const valueHtml = ref('')
 
     const toolbarConfig = {}
     const editorConfig = { placeholder: '请输入内容...' }
@@ -172,17 +173,14 @@ export default defineComponent({
     doc.value = {}
     const selectTreeData = ref()
     selectTreeData.value = []
-    const modalVisible = ref(false);
     const modalLoading = ref(false);
     const handleDocSave = () => {
       modalLoading.value = true;
-      // doc.value.doc1Id = docIds.value[0];
-      // doc.value.doc2Id = docIds.value[1];
+      doc.value.content = editorRef.value.getHtml()
       axios.post("/doc/save", doc.value).then((response) => {
         modalLoading.value = false;
         const data = response.data; // data = commonResp
         if (data.success) {
-          modalVisible.value = false;
 
           // 重新加载列表
           handleQuery();
@@ -198,8 +196,9 @@ export default defineComponent({
      * 编辑
      */
     const edit = (record: any) => {
-      modalVisible.value = true;
       doc.value = Tool.copy(record);
+      findContent()
+
       selectTreeData.value = Tool.copy(level1.value)
 
       banTreeNode(selectTreeData.value , record.id)
@@ -207,6 +206,24 @@ export default defineComponent({
       selectTreeData.value.unshift({id: 0, name: '无'});
     };
 
+    /**
+     * 通过id查询富文本content
+     */
+    const findContent = () => {
+      //处理富文本bug
+      axios.get("/doc/content/"+doc.value.id).then((res) => {
+        const data = res.data
+        if(data.success) {
+          // editor = createEditor({
+          //   // content 或 html
+          //   // 其他属性
+          // })
+          const editor = editorRef.value
+          if (editor == null) return
+          editorRef.value.setHtml(data.content.content)
+        }
+      })
+    }
     /**
      * 搜索
      */
@@ -226,10 +243,10 @@ export default defineComponent({
      * 新增
      */
     const add = () => {
-      modalVisible.value = true;
       doc.value = {
         ebookId: route.query.ebookId
       }
+      valueHtml.value = ''
       selectTreeData.value = Tool.copy(level1.value)
 
       selectTreeData.value.unshift({id: 0, name: '无'});
@@ -339,14 +356,12 @@ export default defineComponent({
 
     onMounted(() => {
       handleQuery();
-
-      /**
-       * 富文本
-       */
-      setTimeout(() => {
-        valueHtml.value = '<p>模拟 Ajax 异步设置内容</p>'
-      }, 1500)
-
+    })
+    // 组件销毁时，也及时销毁编辑器
+    onBeforeUnmount(() => {
+      const editor = editorRef.value
+      if (editor == null) return
+      editor.destroy()
     })
     return {
       top,
@@ -367,7 +382,6 @@ export default defineComponent({
       handleDel,
 
       doc,
-      modalVisible,
       modalLoading,
       handleDocSave,
 
@@ -377,7 +391,7 @@ export default defineComponent({
       mode: 'default', // 或 'simple'
       toolbarConfig,
       editorConfig,
-      handleCreated
+      handleCreated,
     };
   },
 });
