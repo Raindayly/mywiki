@@ -17,7 +17,7 @@
               </span>
             </template>
             <a-menu-item v-for="itemChild in item.children" :key="itemChild.id">
-              {{ itemChild.name }}
+                {{ itemChild.name }}
             </a-menu-item>
           </a-sub-menu>
         </a-menu>
@@ -45,7 +45,9 @@
             </template>
             <a-list-item-meta :description="item.description">
               <template #title>
-                <a :href="item.href">{{ item.name }}</a>
+                <router-link :to="'/doc?ebookId='+item.id">
+                  {{ item.name }}
+                </router-link>
               </template>
               <template #avatar><a-avatar :src="item.cover" /></template>
             </a-list-item-meta>
