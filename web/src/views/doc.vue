@@ -198,12 +198,7 @@ export default defineComponent({
     const edit = (record: any) => {
       doc.value = Tool.copy(record);
       findContent()
-
-      selectTreeData.value = Tool.copy(level1.value)
-
-      banTreeNode(selectTreeData.value , record.id)
-
-      selectTreeData.value.unshift({id: 0, name: '无'});
+      generateFatherTree(record.id)
     };
 
     /**
@@ -285,6 +280,10 @@ export default defineComponent({
           listData.value = data.content
           level1.value = []
           level1.value = Tool.arrayToTree(data.content,'0')
+          /**
+           * 生成选择父文档选项
+           */
+          generateFatherTree()
         } else {
           message.error(data.message)
         }
@@ -292,6 +291,18 @@ export default defineComponent({
     }
     const handleTableChange = (pagination: any) => {
       handleQuery()
+    }
+
+    /**
+     * 生成树结构
+     */
+    const generateFatherTree = (banId?:string) => {
+      selectTreeData.value = Tool.copy(level1.value)
+      if(banId){
+        banTreeNode(selectTreeData.value , banId)
+      }
+
+      selectTreeData.value.unshift({id: 0, name: '无'});
     }
 
     /**
@@ -356,6 +367,10 @@ export default defineComponent({
 
     onMounted(() => {
       handleQuery();
+
+      /**
+       * 父级选择默认值
+       */
     })
     // 组件销毁时，也及时销毁编辑器
     onBeforeUnmount(() => {

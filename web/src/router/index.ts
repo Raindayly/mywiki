@@ -3,7 +3,7 @@ import Home from '../views/home.vue'
 import AdminEbook from '../views/admin/admin-ebook.vue'
 import About from '@/views/about.vue'
 import Category from '@/views/admin/admin-category.vue'
-import Doc from '@/views/admin/admin-doc.vue'
+import Doc from '@/views/doc.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
