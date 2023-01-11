@@ -16,6 +16,7 @@
                 class="draggable-tree"
                 v-model:expandedKeys="expandedKeys"
                 draggable
+                @select="onSelect"
                 :tree-data="level1"
                 :replaceFields="{title:'name',key:'id',value: 'id'}"
                 @dragenter="onDragEnter"
@@ -23,52 +24,53 @@
             />
           </a-col>
           <a-col :span="20">
-            <a-form :model="doc">
-              <a-form-item>
-                <a-input placeholder="请输入名称" v-model:value="doc.name"/>
-              </a-form-item>
-              <a-form-item>
-                <a-tree-select
-                    v-model:value="doc.parent"
-                    style="width: 100%"
-                    :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-                    :tree-data="selectTreeData"
-                    placeholder="请选择父文档"
-                    tree-default-expand-all
-                    :replaceFields="{title:'name',key:'id',value:'id'}"
-                >
-                </a-tree-select>
-              </a-form-item>
-              <a-form-item>
-                <a-input placeholder="请输入排序" v-model:value="doc.sort"/>
-              </a-form-item>
-              <a-form-item>
-                <div style="border: 1px solid #ccc">
-                  <Toolbar
-                      style="border-bottom: 1px solid #ccc"
-                      :editor="editorRef"
-                      :defaultConfig="toolbarConfig"
-                      :mode="mode"
-                  />
-                  <Editor
-                      style="height: 500px; overflow-y: hidden;"
-                      v-model="valueHtml"
-                      :defaultConfig="editorConfig"
-                      :mode="mode"
-                      @onCreated="handleCreated"
-                  />
-                </div>
-              </a-form-item>
-              <a-row>
-                <a-col :span="8"/>
-                <a-col :span="8">
-                  <a-affix :offset-bottom="top">
-                    <a-button block type="primary" @click="handleDocSave">保存</a-button>
-                  </a-affix>
-                </a-col>
-                <a-col :span="8"/>
-              </a-row>
-            </a-form>
+            <div class="wangeditor" :innerHTML="html"></div>
+<!--            <a-form :model="doc">-->
+<!--              <a-form-item>-->
+<!--                <a-input placeholder="请输入名称" v-model:value="doc.name"/>-->
+<!--              </a-form-item>-->
+<!--              <a-form-item>-->
+<!--                <a-tree-select-->
+<!--                    v-model:value="doc.parent"-->
+<!--                    style="width: 100%"-->
+<!--                    :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"-->
+<!--                    :tree-data="selectTreeData"-->
+<!--                    placeholder="请选择父文档"-->
+<!--                    tree-default-expand-all-->
+<!--                    :replaceFields="{title:'name',key:'id',value:'id'}"-->
+<!--                >-->
+<!--                </a-tree-select>-->
+<!--              </a-form-item>-->
+<!--              <a-form-item>-->
+<!--                <a-input placeholder="请输入排序" v-model:value="doc.sort"/>-->
+<!--              </a-form-item>-->
+<!--              <a-form-item>-->
+<!--                <div style="border: 1px solid #ccc">-->
+<!--                  <Toolbar-->
+<!--                      style="border-bottom: 1px solid #ccc"-->
+<!--                      :editor="editorRef"-->
+<!--                      :defaultConfig="toolbarConfig"-->
+<!--                      :mode="mode"-->
+<!--                  />-->
+<!--                  <Editor-->
+<!--                      style="height: 500px; overflow-y: hidden;"-->
+<!--                      v-model="valueHtml"-->
+<!--                      :defaultConfig="editorConfig"-->
+<!--                      :mode="mode"-->
+<!--                      @onCreated="handleCreated"-->
+<!--                  />-->
+<!--                </div>-->
+<!--              </a-form-item>-->
+<!--              <a-row>-->
+<!--                <a-col :span="8"/>-->
+<!--                <a-col :span="8">-->
+<!--                  <a-affix :offset-bottom="top">-->
+<!--                    <a-button block type="primary" @click="handleDocSave">保存</a-button>-->
+<!--                  </a-affix>-->
+<!--                </a-col>-->
+<!--                <a-col :span="8"/>-->
+<!--              </a-row>-->
+<!--            </a-form>-->
 
 
           </a-col>
@@ -134,9 +136,13 @@ export default defineComponent({
     const editorRef = shallowRef()
     // 内容 HTML
     const valueHtml = ref('')
+    //显示html
+    const html = ref('')
 
     const toolbarConfig = {}
     const editorConfig = { placeholder: '请输入内容...' }
+
+
 
     const handleCreated = (editor: any) => {
       editorRef.value = editor // 记录 editor 实例，重要！
@@ -272,12 +278,37 @@ export default defineComponent({
           /**
            * 生成选择父文档选项
            */
+          if (Tool.isNotEmpty(level1)) {
+            defaultSelectedKeys.value = [level1.value[0].id];
+            handleContent(level1.value[0].id);
+            // 初始显示文档信息
+            doc.value = level1.value[0];
+          }
           generateIptTree()
         } else {
           message.error(data.message)
         }
       })
     }
+    const handleContent = (docId:any) => {
+      axios.get('/doc/content/'+ docId).then((resp) => {
+        const data = resp.data
+        if (data.success) {
+          html.value = data.content.content
+        }
+      })
+    }
+
+    const onSelect = (selectedKeys: any, info: any) => {
+      console.log('selected', selectedKeys, info);
+      if (Tool.isNotEmpty(selectedKeys)) {
+        // 选中某一节点时，加载该节点的文档信息
+        doc.value = info.selectedNodes[0].props;
+        // 加载内容
+        handleContent(selectedKeys[0]);
+      }
+    };
+
     const handleTableChange = (pagination: any) => {
       handleQuery()
     }
@@ -358,6 +389,8 @@ export default defineComponent({
      */
     const expandedKeys = ref<string[]>([]);
     const gData = ref<TreeDataItem[]>([]);
+    const defaultSelectedKeys = ref();
+    defaultSelectedKeys.value = [];
     const onDragEnter = (info: TreeDragEvent) => {
       console.log(info);
       // expandedKeys 需要展开时
@@ -422,7 +455,6 @@ export default defineComponent({
     }
     onMounted(() => {
       handleQuery();
-
       /**
        * 电子书id默认值
        */
@@ -463,6 +495,7 @@ export default defineComponent({
       toolbarConfig,
       editorConfig,
       handleCreated,
+      html,
 
 
       //树节点
@@ -470,11 +503,83 @@ export default defineComponent({
       gData,
       onDragEnter,
       onDrop,
+      onSelect
     }
   }
 });
 </script>
 
-<style scoped>
+<style>
+/* wangeditor默认样式, 参照: http://www.wangeditor.com/doc/pages/02-%E5%86%85%E5%AE%B9%E5%A4%84%E7%90%86/03-%E8%8E%B7%E5%8F%96html.html */
+/* table 样式 */
+.wangeditor table {
+  border-top: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+}
+.wangeditor table td,
+.wangeditor table th {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  padding: 3px 5px;
+}
+.wangeditor table th {
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
 
+/* blockquote 样式 */
+.wangeditor blockquote {
+  display: block;
+  border-left: 8px solid #d0e5f2;
+  padding: 5px 10px;
+  margin: 10px 0;
+  line-height: 1.4;
+  font-size: 100%;
+  background-color: #f1f1f1;
+}
+
+/* code 样式 */
+.wangeditor code {
+  display: inline-block;
+  *display: inline;
+  *zoom: 1;
+  background-color: #f1f1f1;
+  border-radius: 3px;
+  padding: 3px 5px;
+  margin: 0 3px;
+}
+.wangeditor pre code {
+  display: block;
+}
+
+/* ul ol 样式 */
+.wangeditor ul, ol {
+  margin: 10px 0 10px 20px;
+}
+
+/* 和antdv p冲突，覆盖掉 */
+.wangeditor blockquote p {
+  font-family:"YouYuan";
+  margin: 20px 10px !important;
+  font-size: 16px !important;
+  font-weight:600;
+}
+
+/* 点赞 */
+.vote-div {
+  padding: 15px;
+  text-align: center;
+}
+
+/* 图片自适应 */
+.wangeditor img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 视频自适应 */
+.wangeditor iframe {
+  width: 100%;
+  height: 400px;
+}
 </style>
