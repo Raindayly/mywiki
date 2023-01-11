@@ -110,3 +110,13 @@ create table if not exists wikidev.`content`
     `id` varchar(20) not null comment 'id' primary key,
     `content` mediumtext not null comment '内容'
 ) engine = innodb default charset = utf8mb4 comment '文档';
+
+#新增用户表
+create table if not exists wikidev.`user`
+(
+    `id` varchar(20) not null comment 'id' primary key,
+    `login_name` varchar(50) not null comment '登陆名',
+    `nick_name` varchar(50) comment '昵称',
+    `password` char(32) comment '密码',
+    unique key `login_name_unique` (`login_name`)
+) engine = innodb default charset = utf8mb4 comment '用户';
