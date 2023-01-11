@@ -15,7 +15,7 @@
           </a-col>
           <a-col :span="20">
             <div v-if="loading"></div>
-            <div v-else :innerHTML="html"></div>
+            <div class="wangeditor" v-else :innerHTML="html"></div>
           </a-col>
         </a-row>
       </a-space>
@@ -196,19 +196,19 @@ export default defineComponent({
   background-color: #f1f1f1;
 }
 
-/*!* code 样式 *!*/
-/*.wangeditor code {*/
-/*  display: inline-block;*/
-/*  *display: inline;*/
-/*  *zoom: 1;*/
-/*  background-color: #f1f1f1;*/
-/*  border-radius: 3px;*/
-/*  padding: 3px 5px;*/
-/*  margin: 0 3px;*/
-/*}*/
-/*.wangeditor pre code {*/
-/*  display: block;*/
-/*}*/
+/* code 样式 */
+.wangeditor code {
+  display: inline-block;
+  *display: inline;
+  *zoom: 1;
+  /*background-color: #f1f1f1;*/
+  border-radius: 3px;
+  padding: 3px 5px;
+  margin: 0 3px;
+}
+.wangeditor pre code {
+  display: block;
+}
 
 /* ul ol 样式 */
 .wangeditor ul, ol {
