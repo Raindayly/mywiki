@@ -24,7 +24,7 @@
             />
           </a-col>
           <a-col :span="20">
-            <div class="wangeditor" :innerHTML="html"></div>
+            <div :innerHTML="html"></div>
 <!--            <a-form :model="doc">-->
 <!--              <a-form-item>-->
 <!--                <a-input placeholder="请输入名称" v-model:value="doc.name"/>-->
@@ -86,7 +86,6 @@
 <!--  >-->
 <!--  </a-modal>-->
 </template>
-
 <script lang="ts">
 import {defineComponent, onBeforeUnmount, onMounted, reactive, ref, shallowRef} from 'vue';
 import axios from "axios";
@@ -96,6 +95,12 @@ import {useRoute} from "vue-router";
 import { Editor, Toolbar, } from '@wangeditor/editor-for-vue'
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
 import { TreeDataItem, TreeDragEvent, DropEvent } from 'ant-design-vue/es/tree/Tree';
+import "prismjs";
+// 引用css
+import "prismjs/themes/prism-okaidia.css";
+//prismjs在window对象下有Prism属性
+// 使用any类型骗过ts检测
+const Prism = (window as any).Prism;
 
 const columns = [
   {
@@ -295,10 +300,12 @@ export default defineComponent({
         const data = resp.data
         if (data.success) {
           html.value = data.content.content
+          setTimeout(()=>{
+            Prism.highlightAll()
+          })
         }
       })
     }
-
     const onSelect = (selectedKeys: any, info: any) => {
       console.log('selected', selectedKeys, info);
       if (Tool.isNotEmpty(selectedKeys)) {
@@ -538,19 +545,19 @@ export default defineComponent({
   background-color: #f1f1f1;
 }
 
-/* code 样式 */
-.wangeditor code {
-  display: inline-block;
-  *display: inline;
-  *zoom: 1;
-  background-color: #f1f1f1;
-  border-radius: 3px;
-  padding: 3px 5px;
-  margin: 0 3px;
-}
-.wangeditor pre code {
-  display: block;
-}
+/*!* code 样式 *!*/
+/*.wangeditor code {*/
+/*  display: inline-block;*/
+/*  *display: inline;*/
+/*  *zoom: 1;*/
+/*  background-color: #f1f1f1;*/
+/*  border-radius: 3px;*/
+/*  padding: 3px 5px;*/
+/*  margin: 0 3px;*/
+/*}*/
+/*.wangeditor pre code {*/
+/*  display: block;*/
+/*}*/
 
 /* ul ol 样式 */
 .wangeditor ul, ol {
