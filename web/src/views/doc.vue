@@ -11,30 +11,18 @@
           </a-form-item>
         </a-form>
         <a-row :gutter="16">
-          <a-col :span="8">
-            <a-table :columns="columns"
-                 :data-source="level1"
-                 :rowKey="record => record.id"
-                 :loading="loading"
-                 :pagination="false"
-                 @change="handleTableChange"
-            >
-              <template #action="{ text, record }">
-                <a-space>
-                  <a-button type="primary" @click="edit(record)">编辑</a-button>
-                  <a-popconfirm
-                      title="请确定是否需要删除"
-                      ok-text="是"
-                      cancel-text="否"
-                      @confirm="handleDel(record.id)"
-                  >
-                    <a-button type="primary" danger>删除</a-button>
-                  </a-popconfirm>
-                </a-space>
-              </template>
-            </a-table>
+          <a-col :span="4">
+            <a-tree
+                class="draggable-tree"
+                v-model:expandedKeys="expandedKeys"
+                draggable
+                :tree-data="level1"
+                :replaceFields="{title:'name',key:'id',value: 'id'}"
+                @dragenter="onDragEnter"
+                @drop="onDrop"
+            />
           </a-col>
-          <a-col :span="16">
+          <a-col :span="20">
             <a-form :model="doc">
               <a-form-item>
                 <a-input placeholder="请输入名称" v-model:value="doc.name"/>
@@ -104,8 +92,8 @@ import {message} from 'ant-design-vue';
 import {Tool} from "@/util/tool";
 import {useRoute} from "vue-router";
 import { Editor, Toolbar, } from '@wangeditor/editor-for-vue'
-import { createEditor } from '@wangeditor/editor'
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
+import { TreeDataItem, TreeDragEvent, DropEvent } from 'ant-design-vue/es/tree/Tree';
 
 const columns = [
   {
@@ -124,6 +112,8 @@ const columns = [
   },
 ];
 
+
+
 export default defineComponent({
   name: "admin-book",
   components: { Editor, Toolbar },
@@ -135,6 +125,7 @@ export default defineComponent({
     const searchForm = ref({
       name: ''
     })
+    const treeData = ref({})
 
     /**
      * 富文本
@@ -198,7 +189,7 @@ export default defineComponent({
     const edit = (record: any) => {
       doc.value = Tool.copy(record);
       findContent()
-      generateFatherTree(record.id)
+      generateIptTree(record.id)
     };
 
     /**
@@ -242,7 +233,7 @@ export default defineComponent({
         ebookId: route.query.ebookId
       }
       valueHtml.value = ''
-      generateFatherTree()
+      generateIptTree()
     }
 
     /**
@@ -281,7 +272,7 @@ export default defineComponent({
           /**
            * 生成选择父文档选项
            */
-          generateFatherTree()
+          generateIptTree()
         } else {
           message.error(data.message)
         }
@@ -292,9 +283,9 @@ export default defineComponent({
     }
 
     /**
-     * 生成树结构
+     * 生成select树结构
      */
-    const generateFatherTree = (banId?:string) => {
+    const generateIptTree = (banId?:string) => {
       selectTreeData.value = Tool.copy(level1.value)?Tool.copy(level1.value):[]
       if(banId){
         banTreeNode(selectTreeData.value , banId)
@@ -362,6 +353,73 @@ export default defineComponent({
       return recursion(source,id)
     }
 
+    /**
+     * 树形控件
+     */
+    const expandedKeys = ref<string[]>([]);
+    const gData = ref<TreeDataItem[]>([]);
+    const onDragEnter = (info: TreeDragEvent) => {
+      console.log(info);
+      // expandedKeys 需要展开时
+      // expandedKeys.value = info.expandedKeys
+    };
+
+    const onDrop = (info: DropEvent) => {
+      console.log(info);
+      const dropKey = info.node.eventKey;
+      const dragKey = info.dragNode.eventKey;
+      const dropPos = info.node.pos.split('-');
+      const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
+      const loop = (data: TreeDataItem[], key: string, callback: any) => {
+        data.forEach((item, index, arr) => {
+          if (item.key === key) {
+            return callback(item, index, arr);
+          }
+          if (item.children) {
+            return loop(item.children, key, callback);
+          }
+        });
+      };
+      const data = [...gData.value];
+
+      // Find dragObject
+      let dragObj: TreeDataItem = {};
+      loop(data, dragKey, (item: TreeDataItem, index: number, arr: TreeDataItem[]) => {
+        arr.splice(index, 1);
+        dragObj = item;
+      });
+      if (!info.dropToGap) {
+        // Drop on the content
+        loop(data, dropKey, (item: TreeDataItem) => {
+          item.children = item.children || [];
+          // where to insert 示例添加到尾部，可以是随意位置
+          item.children.push(dragObj);
+        });
+      } else if (
+          (info.node.children || []).length > 0 && // Has children
+          info.node.expanded && // Is expanded
+          dropPosition === 1 // On the bottom gap
+      ) {
+        loop(data, dropKey, (item: TreeDataItem) => {
+          item.children = item.children || [];
+          // where to insert 示例添加到尾部，可以是随意位置
+          item.children.unshift(dragObj);
+        });
+      } else {
+        let ar: TreeDataItem[] = [];
+        let i = 0;
+        loop(data, dropKey, (item: TreeDataItem, index: number, arr: TreeDataItem[]) => {
+          ar = arr;
+          i = index;
+        });
+        if (dropPosition === -1) {
+          ar.splice(i, 0, dragObj);
+        } else {
+          ar.splice(i + 1, 0, dragObj);
+        }
+      }
+      gData.value = data;
+    }
     onMounted(() => {
       handleQuery();
 
@@ -405,8 +463,15 @@ export default defineComponent({
       toolbarConfig,
       editorConfig,
       handleCreated,
-    };
-  },
+
+
+      //树节点
+      expandedKeys,
+      gData,
+      onDragEnter,
+      onDrop,
+    }
+  }
 });
 </script>
 
