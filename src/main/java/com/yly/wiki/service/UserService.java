@@ -4,6 +4,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yly.wiki.entity.User;
 import com.yly.wiki.entity.UserExample;
+import com.yly.wiki.exception.BusinessException;
+import com.yly.wiki.exception.BusinessExceptionCode;
 import com.yly.wiki.mapper.UserMapper;
 import com.yly.wiki.req.UserQueryReq;
 import com.yly.wiki.req.UserSaveReq;
@@ -77,7 +79,11 @@ public class UserService {
         User user = CopyUtil.copy(req, User.class);
         if(ObjectUtils.isEmpty(req.getId())) {
             user.setId(String.valueOf(snowFlake.nextId()));
-            userMapper.insert(user);
+            if(ObjectUtils.isEmpty(findUserByLoginName(req.getLoginName()))){
+                userMapper.insert(user);
+            } else {
+                throw new BusinessException(BusinessExceptionCode.USER_LOGIN_NAME_EXIST);
+            }
         }else {
             userMapper.updateByPrimaryKey(user);
         }
@@ -113,8 +119,12 @@ public class UserService {
 
     }
 
-    public User findUser(String id) {
-        return userMapper.selectByPrimaryKey(id);
+    public User findUserByLoginName(String loginName) {
+        UserExample userExample = new UserExample();
+        UserExample.Criteria criteria = userExample.createCriteria();
+        criteria.andLoginNameEqualTo(loginName);
+        List<User> users = userMapper.selectByExample(userExample);
+        return users.get(0);
     }
 
 }
