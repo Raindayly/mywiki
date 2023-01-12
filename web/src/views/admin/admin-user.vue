@@ -54,13 +54,13 @@
   >
     <a-form :model="user" :label-col="{ span: 4 }" :wrapper-col="{ span: 18 }">
       <a-form-item label="登陆名">
-        <a-input v-model:value="user.loginName" placeholder="请输入登陆名" />
+        <a-input v-model:value="user.loginName" placeholder="请输入登陆名" :disabled="!!user.id"/>
       </a-form-item>
       <a-form-item label="昵称">
         <a-input v-model:value="user.nickName" placeholder="请输入昵称" />
       </a-form-item>
-      <a-form-item label="密码">
-        <a-input v-model:value="user.password" type="textarea" placeholder="请输入密码"/>
+      <a-form-item label="密码" v-show="!user.id">
+        <a-input v-model:value="user.password" type="textarea" placeholder="请输入密码" />
       </a-form-item>
     </a-form>
   </a-modal>
@@ -84,11 +84,6 @@ const columns = [
     title: '昵称',
     dataIndex: 'nickName',
     slots: {customRender: 'nickName'}
-  },
-  {
-    title: '密码',
-    dataIndex: 'password',
-    slots: {customRender: 'password'},
   },
   {
     title: '操作',
