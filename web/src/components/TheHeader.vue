@@ -43,16 +43,16 @@
             ok-text="是"
             cancel-text="否"
             @confirm="logout"
-            v-if="isLogin"
+            v-if="userInfo.id"
         >
           <a class="login-menu" >
             <span>退出登录</span>
           </a>
         </a-popconfirm>
-        <a class="login-menu" v-if="isLogin">
+        <a class="login-menu" v-if="userInfo.id">
           <span>您好：{{ userInfo.nickName }}</span>
         </a>
-        <a class="login-menu" v-if="!isLogin" @click="showLoginModal">
+        <a class="login-menu" v-if="!userInfo.id" @click="showLoginModal">
           <span>登录</span>
         </a>
       </a-col>
@@ -76,9 +76,10 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref} from 'vue';
+import {computed, defineComponent, ref} from 'vue';
 import axios from "axios";
 import {message} from "ant-design-vue";
+import store from "@/store";
 
 declare let hexMd5: any;
 declare let KEY: any;
@@ -97,12 +98,9 @@ export default defineComponent({
       password: ''
     }
 
-    //记录当前是否登录
-    const isLogin = ref(false)
 
     //记录当前登录人的信息
-    const userInfo = ref()
-    userInfo.value = {}
+    const userInfo = computed(()=> store.state.user)
 
     const showLoginModal = () => {
       isLoginModal.value = true
@@ -118,8 +116,7 @@ export default defineComponent({
         let data = res.data
         if(data.success){
           isLoginModal.value = false
-          isLogin.value = true
-          userInfo.value = data.content
+          store.commit("setUser",data.content)
           message.success("登录成功")
         }else{
           message.error(data.message)
@@ -130,9 +127,16 @@ export default defineComponent({
     }
 
     const logout = () => {
-      userInfo.value = {}
-      isLogin.value = false
-      message.success("退出登录成功")
+      let token = userInfo.value.token
+      axios.post('/user/logout/'+ token).then(res => {
+        let data = res.data
+        if(data.success){
+          store.commit("setUser", {});
+          message.success("退出登录成功")
+        } else {
+          message.error(data.message);
+        }
+      })
     }
 
     return {
@@ -143,7 +147,6 @@ export default defineComponent({
       loginModalLoading,
       login,
       loginUser,
-      isLogin,
 
       logout
 

@@ -1,5 +1,6 @@
 package com.yly.wiki.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yly.wiki.req.UserLoginReq;
 import com.yly.wiki.req.UserQueryReq;
 import com.yly.wiki.req.UserResetPasswordReq;
@@ -10,6 +11,9 @@ import com.yly.wiki.resp.UserLoginResp;
 import com.yly.wiki.resp.UserResp;
 import com.yly.wiki.service.UserService;
 import com.yly.wiki.util.SnowFlake;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,11 +21,14 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TestController.class);
 
 
     @Resource
@@ -29,6 +36,9 @@ public class UserController {
 
     @Resource
     private SnowFlake snowFlake;
+
+    @Resource
+    private RedisTemplate redisTemplate;
 
 
     @GetMapping("/all")
@@ -79,11 +89,20 @@ public class UserController {
         UserLoginResp userLoginResp = userService.login(req);
 
         Long token = snowFlake.nextId();
-//        LOG.info("生成单点登录token：{}，并放入redis中", token);
+        LOG.info("生成单点登录token：{}，并放入redis中", token);
         userLoginResp.setToken(token.toString());
-//        redisTemplate.opsForValue().set(token.toString(), JSONObject.toJSONString(userLoginResp), 3600 * 24, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(token.toString(), JSONObject.toJSONString(userLoginResp), 3600 * 24, TimeUnit.SECONDS);
 
         resp.setContent(userLoginResp);
+        return resp;
+    }
+
+
+    @PostMapping("/logout/{token}")
+    public CommonResp logout(@PathVariable String token) {
+        redisTemplate.delete(token);
+        CommonResp resp = new CommonResp<>();
+        LOG.info("从redis中删除token: {}", token);
         return resp;
     }
 }
