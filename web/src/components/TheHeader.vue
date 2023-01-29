@@ -42,15 +42,17 @@
             title="确认退出登录?"
             ok-text="是"
             cancel-text="否"
+            @confirm="logout"
+            v-if="isLogin"
         >
           <a class="login-menu" >
             <span>退出登录</span>
           </a>
         </a-popconfirm>
-        <a class="login-menu" >
-          <span>您好：</span>
+        <a class="login-menu" v-if="isLogin">
+          <span>您好：{{ userInfo.nickName }}</span>
         </a>
-        <a class="login-menu" @click="showLoginModal">
+        <a class="login-menu" v-if="!isLogin" @click="showLoginModal">
           <span>登录</span>
         </a>
       </a-col>
@@ -76,6 +78,7 @@
 <script lang="ts">
 import {defineComponent, ref} from 'vue';
 import axios from "axios";
+import {message} from "ant-design-vue";
 
 declare let hexMd5: any;
 declare let KEY: any;
@@ -94,26 +97,55 @@ export default defineComponent({
       password: ''
     }
 
+    //记录当前是否登录
+    const isLogin = ref(false)
+
+    //记录当前登录人的信息
+    const userInfo = ref()
+    userInfo.value = {}
+
     const showLoginModal = () => {
       isLoginModal.value = true
     }
 
     const login = () => {
       let hexMd5Password = hexMd5(loginUser.value.password + KEY)
+      loginModalLoading.value = true
       axios.post('/user/login',{
         loginName: loginUser.value.loginName,
         password: hexMd5Password
       }).then(res => {
-        console.log(res)
+        let data = res.data
+        if(data.success){
+          isLoginModal.value = false
+          isLogin.value = true
+          userInfo.value = data.content
+          message.success("登录成功")
+        }else{
+          message.error(data.message)
+        }
+      }).finally(() => {
+        loginModalLoading.value = false
       })
     }
 
+    const logout = () => {
+      userInfo.value = {}
+      isLogin.value = false
+      message.success("退出登录成功")
+    }
+
     return {
+      userInfo,
+
       isLoginModal,
       showLoginModal,
       loginModalLoading,
       login,
-      loginUser
+      loginUser,
+      isLogin,
+
+      logout
 
     }
   }
