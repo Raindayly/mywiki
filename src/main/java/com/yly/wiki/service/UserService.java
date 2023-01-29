@@ -7,15 +7,19 @@ import com.yly.wiki.entity.UserExample;
 import com.yly.wiki.exception.BusinessException;
 import com.yly.wiki.exception.BusinessExceptionCode;
 import com.yly.wiki.mapper.UserMapper;
+import com.yly.wiki.req.UserLoginReq;
 import com.yly.wiki.req.UserQueryReq;
+import com.yly.wiki.req.UserResetPasswordReq;
 import com.yly.wiki.req.UserSaveReq;
 import com.yly.wiki.resp.PageResp;
+import com.yly.wiki.resp.UserLoginResp;
 import com.yly.wiki.resp.UserResp;
 import com.yly.wiki.util.CopyUtil;
 import com.yly.wiki.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
@@ -121,6 +125,18 @@ public class UserService {
 
     }
 
+    public User selectByLoginName(String LoginName) {
+        UserExample userExample = new UserExample();
+        UserExample.Criteria criteria = userExample.createCriteria();
+        criteria.andLoginNameEqualTo(LoginName);
+        List<User> userList = userMapper.selectByExample(userExample);
+        if (CollectionUtils.isEmpty(userList)) {
+            return null;
+        } else {
+            return userList.get(0);
+        }
+    }
+
     public User findUserByLoginName(String loginName) {
         UserExample userExample = new UserExample();
         UserExample.Criteria criteria = userExample.createCriteria();
@@ -129,4 +145,33 @@ public class UserService {
         return users.get(0);
     }
 
+    public UserLoginResp login(UserLoginReq req) {
+        //拿到用户名一致的第一个用户信息
+        User userDb = selectByLoginName(req.getLoginName());
+
+        if(ObjectUtils.isEmpty(userDb)){
+            LOG.info("用户名不存在, {}", req.getLoginName());
+            throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+        }else {
+            if (userDb.getPassword().equals(req.getPassword())) {
+                // 登录成功
+                UserLoginResp userLoginResp = CopyUtil.copy(userDb, UserLoginResp.class);
+                return userLoginResp;
+            } else {
+                // 密码不对
+                LOG.info("密码不对, 输入密码：{}, 数据库密码：{}", req.getPassword(), userDb.getPassword());
+                throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+            }
+        }
+
+
+    }
+
+    /**
+     * 修改密码
+     */
+    public void resetPassword(UserResetPasswordReq req) {
+        User user = CopyUtil.copy(req, User.class);
+        userMapper.updateByPrimaryKeySelective(user);
+    }
 }

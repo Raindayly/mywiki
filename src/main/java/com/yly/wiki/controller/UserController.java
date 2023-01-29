@@ -1,11 +1,15 @@
 package com.yly.wiki.controller;
 
+import com.yly.wiki.req.UserLoginReq;
 import com.yly.wiki.req.UserQueryReq;
+import com.yly.wiki.req.UserResetPasswordReq;
 import com.yly.wiki.req.UserSaveReq;
 import com.yly.wiki.resp.CommonResp;
 import com.yly.wiki.resp.PageResp;
+import com.yly.wiki.resp.UserLoginResp;
 import com.yly.wiki.resp.UserResp;
 import com.yly.wiki.service.UserService;
+import com.yly.wiki.util.SnowFlake;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +26,9 @@ public class UserController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private SnowFlake snowFlake;
 
 
     @GetMapping("/all")
@@ -54,6 +61,29 @@ public class UserController {
         CommonResp resp = new CommonResp<>();
         List<String> list = Arrays.asList(idsStr.split(","));
         userService.delete(list);
+        return resp;
+    }
+
+    @PostMapping("/reset-password")
+    public CommonResp login(@Valid @RequestBody UserResetPasswordReq req) {
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        userService.resetPassword(req);
+        CommonResp resp = new CommonResp<>();
+        return resp;
+    }
+
+    @PostMapping("/login")
+    public CommonResp login(@Valid @RequestBody UserLoginReq req) {
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp<UserLoginResp> resp = new CommonResp<>();
+        UserLoginResp userLoginResp = userService.login(req);
+
+        Long token = snowFlake.nextId();
+//        LOG.info("生成单点登录token：{}，并放入redis中", token);
+        userLoginResp.setToken(token.toString());
+//        redisTemplate.opsForValue().set(token.toString(), JSONObject.toJSONString(userLoginResp), 3600 * 24, TimeUnit.SECONDS);
+
+        resp.setContent(userLoginResp);
         return resp;
     }
 }
