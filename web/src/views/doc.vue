@@ -2,7 +2,10 @@
   <a-layout style="padding: 24px 0; background: #fff">
     <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
       <a-space direction="vertical" style="width: 100%">
-        <a-row :gutter="16">
+        <a-row :gutter="16" v-if="level1.length === 0">
+          没有相关文档
+        </a-row>
+        <a-row :gutter="16" v-else>
           <a-col :span="4">
             <a-tree
                 class="draggable-tree"
