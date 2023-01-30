@@ -8,6 +8,9 @@
     <update id="updateViewCount">
         update doc set view_count = view_count + 1 where  id = #{id}
     </update>
+    <update id="updateVoteCount">
+        update doc set vote_count = vote_count + 1 where  id = #{id}
+    </update>
     <select id="list" resultType="com.yly.wiki.entity.Test">
         select `id`, `name`, `password` from `test`
     </select>

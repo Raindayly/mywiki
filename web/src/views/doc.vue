@@ -14,8 +14,13 @@
             />
           </a-col>
           <a-col :span="20">
-            <div v-if="loading"></div>
-            <div class="wangeditor" v-else :innerHTML="html"></div>
+            <div>文章标题:{{doc.name}}</div>
+            <span>点赞数：{{doc.voteCount}}</span><span>阅读数：{{doc.viewCount}}</span>
+            <a-divider />
+            <div class="wangeditor" :innerHTML="html"></div>
+            <div class="center mgt">
+              <a-button style="margin: auto" type="primary" shape="round" size="large" @click="handleVote">点赞</a-button>
+            </div>
           </a-col>
         </a-row>
       </a-space>
@@ -30,6 +35,7 @@ import {Tool} from "@/util/tool";
 import {useRoute} from "vue-router";
 import { Editor, Toolbar, } from '@wangeditor/editor-for-vue'
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
+import '../assets/css/common.css'
 import { TreeDataItem, TreeDragEvent, DropEvent } from 'ant-design-vue/es/tree/Tree';
 import "prismjs";
 // 引用css
@@ -121,6 +127,20 @@ export default defineComponent({
       }
     };
 
+    /**
+     * 点赞
+     */
+    const handleVote = () => {
+      axios.get('/doc/vote/'+ doc.value.id).then((resp) => {
+        const data = resp.data
+        if (data.success) {
+          doc.value.voteCount++;
+        } else {
+          message.error(data.message);
+        }
+      })
+    }
+
 
     /**
      * 树形控件
@@ -161,7 +181,10 @@ export default defineComponent({
       //树节点
       expandedKeys,
       gData,
-      onSelect
+      onSelect,
+
+      //点赞
+      handleVote
     }
   }
 });
@@ -239,5 +262,8 @@ export default defineComponent({
 .wangeditor iframe {
   width: 100%;
   height: 400px;
+}
+.mgt {
+  margin-top: 80px;
 }
 </style>

@@ -1,9 +1,6 @@
 package com.yly.wiki.mapper;
 
-import com.yly.wiki.entity.Test;
 import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
 
 /**
  * @version 1.0
@@ -13,6 +10,6 @@ import java.util.List;
  */
 public interface MyDocMapper {
 
-    List<Test> list();
     void updateViewCount(@Param("id") String id);
+    void updateVoteCount(@Param("id") String id);
 }

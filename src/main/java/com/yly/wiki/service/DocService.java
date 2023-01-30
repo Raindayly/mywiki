@@ -149,4 +149,8 @@ public class DocService {
 
         return list;
     }
+
+    public void vote(String id) {
+        myDocMapper.updateVoteCount(id);
+    }
 }
