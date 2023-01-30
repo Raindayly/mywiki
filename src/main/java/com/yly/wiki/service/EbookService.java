@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.yly.wiki.entity.Ebook;
 import com.yly.wiki.entity.EbookExample;
 import com.yly.wiki.mapper.EbookMapper;
+import com.yly.wiki.mapper.MyEbookMapper;
 import com.yly.wiki.req.EbookQueryReq;
 import com.yly.wiki.req.EbookSaveReq;
 import com.yly.wiki.resp.EbookResp;
@@ -24,6 +25,9 @@ public class EbookService {
 
     @Resource
     private EbookMapper ebookMapper;
+
+    @Resource
+    private MyEbookMapper myEbookMapper;
 
     @Resource
     private SnowFlake snowFlake;
@@ -77,5 +81,9 @@ public class EbookService {
      */
     public void delete(String id) {
         ebookMapper.deleteByPrimaryKey(id);
+    }
+
+    public void updateEbookTiming() {
+        myEbookMapper.updateEbookInfo();
     }
 }
