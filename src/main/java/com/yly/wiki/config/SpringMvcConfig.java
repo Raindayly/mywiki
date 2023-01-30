@@ -1,6 +1,7 @@
 package com.yly.wiki.config;
 
 import com.yly.wiki.interceptor.LogInterceptor;
+import com.yly.wiki.interceptor.LoginInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -10,8 +11,8 @@ import javax.annotation.Resource;
 @Configuration
 public class SpringMvcConfig implements WebMvcConfigurer {
 
-//    @Resource
-//    LoginInterceptor loginInterceptor;
+    @Resource
+    LoginInterceptor loginInterceptor;
 
 //    @Resource
 //    ActionInterceptor actionInterceptor;
@@ -20,23 +21,19 @@ public class SpringMvcConfig implements WebMvcConfigurer {
     LogInterceptor logInterceptor;
 
     public void addInterceptors(InterceptorRegistry registry) {
-        //针对所有的方法进行拦截 除了登录接口
-        registry.addInterceptor(logInterceptor)
+        registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/login");
-//        registry.addInterceptor(loginInterceptor)
-//                .addPathPatterns("/**")
-//                .excludePathPatterns(
-//                        "/test/**",
-//                        "/redis/**",
-//                        "/user/login",
-//                        "/category/all",
-//                        "/ebook/list",
-//                        "/doc/all/**",
-//                        "/doc/vote/**",
-//                        "/doc/find-content/**",
-//                        "/ebook-snapshot/**"
-//                );
+                .excludePathPatterns(
+                        "/test/**",
+                        "/redis/**",
+                        "/user/login",
+                        "/category/all",
+                        "/ebook/list",
+                        "/doc/all/**",
+                        "/doc/vote/**",
+                        "/doc/find-content/**",
+                        "/ebook-snapshot/**"
+                );
 
 //        registry.addInterceptor(actionInterceptor)
 //                .addPathPatterns(
