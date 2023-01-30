@@ -7,6 +7,7 @@ import com.yly.wiki.entity.Doc;
 import com.yly.wiki.entity.DocExample;
 import com.yly.wiki.mapper.ContentMapper;
 import com.yly.wiki.mapper.DocMapper;
+import com.yly.wiki.mapper.MyDocMapper;
 import com.yly.wiki.req.DocQueryReq;
 import com.yly.wiki.req.DocSaveReq;
 import com.yly.wiki.resp.DocResp;
@@ -30,6 +31,9 @@ public class DocService {
 
     @Resource
     private DocMapper docMapper;
+
+    @Resource
+    private MyDocMapper myDocMapper;
 
     @Resource
     private ContentMapper contentMapper;
@@ -130,6 +134,7 @@ public class DocService {
     }
 
     public Content findContent(String id) {
+        myDocMapper.updateViewCount(id);
         return contentMapper.selectByPrimaryKey(id);
     }
 

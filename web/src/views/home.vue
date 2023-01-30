@@ -27,34 +27,34 @@
           <the-welcome></the-welcome>
         </div>
         <a-list v-show="!isWelcome" :loading="loading" item-layout="vertical" size="large" :grid="{ gutter: 20, column: 3 }"  :data-source="books">
-        <template #renderItem="{ item }">
-          <a-list-item :key="item.title">
-            <template #actions>
-                <span>
-                  <component v-bind:is="'FileOutlined'" style="margin-right: 8px" />
-                  {{ item.docCount }}
-                </span>
-                <span>
-                  <component v-bind:is="'UserOutlined'" style="margin-right: 8px" />
-                  {{ item.viewCount }}
-                </span>
-                <span>
-                  <component v-bind:is="'LikeOutlined'" style="margin-right: 8px" />
-                  {{ item.voteCount }}
-                </span>
-            </template>
-            <a-list-item-meta :description="item.description">
-              <template #title>
-                <router-link :to="'/doc?ebookId='+item.id">
-                  {{ item.name }}
-                </router-link>
+          <template #renderItem="{ item }">
+            <a-list-item :key="item.title">
+              <template #actions>
+                  <span>
+                    <component v-bind:is="'FileOutlined'" style="margin-right: 8px" />
+                    {{ item.docCount }}
+                  </span>
+                  <span>
+                    <component v-bind:is="'UserOutlined'" style="margin-right: 8px" />
+                    {{ item.viewCount }}
+                  </span>
+                  <span>
+                    <component v-bind:is="'LikeOutlined'" style="margin-right: 8px" />
+                    {{ item.voteCount }}
+                  </span>
               </template>
-              <template #avatar><a-avatar :src="item.cover" /></template>
-            </a-list-item-meta>
-            {{ item.content }}
-          </a-list-item>
-        </template>
-      </a-list>
+              <a-list-item-meta :description="item.description">
+                <template #title>
+                  <router-link :to="'/doc?ebookId='+item.id">
+                    {{ item.name }}
+                  </router-link>
+                </template>
+                <template #avatar><a-avatar :src="item.cover" /></template>
+              </a-list-item-meta>
+              {{ item.content }}
+            </a-list-item>
+          </template>
+        </a-list>
       </a-layout-content>
     </a-layout>
 </template>
