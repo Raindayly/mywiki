@@ -15,17 +15,17 @@
               首页
             </router-link>
           </a-menu-item>
-          <a-menu-item key="/admin/ebook">
+          <a-menu-item key="/admin/ebook" v-if="userInfo.id">
             <router-link to="/admin/ebook">
               电子书管理
             </router-link>
           </a-menu-item>
-          <a-menu-item key="/admin/category">
+          <a-menu-item key="/admin/category" v-if="userInfo.id">
             <router-link to="/admin/category">
               类别管理
             </router-link>
           </a-menu-item>
-          <a-menu-item key="/admin/user">
+          <a-menu-item key="/admin/user" v-if="userInfo.id">
             <router-link to="/admin/user">
               用户管理
             </router-link>
