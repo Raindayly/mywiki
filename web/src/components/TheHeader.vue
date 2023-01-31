@@ -80,6 +80,7 @@ import {computed, defineComponent, ref} from 'vue';
 import axios from "axios";
 import {message} from "ant-design-vue";
 import store from "@/store";
+import router from "@/router";
 
 declare let hexMd5: any;
 declare let KEY: any;
@@ -132,6 +133,7 @@ export default defineComponent({
         let data = res.data
         if(data.success){
           store.commit("setUser", {});
+          router.push("/")
           message.success("退出登录成功")
         } else {
           message.error(data.message);
