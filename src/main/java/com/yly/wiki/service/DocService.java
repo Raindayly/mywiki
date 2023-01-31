@@ -153,4 +153,8 @@ public class DocService {
     public void vote(String id) {
         myDocMapper.updateVoteCount(id);
     }
+
+    public Doc selectDocById(String id) {
+        return docMapper.selectByPrimaryKey(id);
+    }
 }

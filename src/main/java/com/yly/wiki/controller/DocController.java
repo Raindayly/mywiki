@@ -1,12 +1,14 @@
 package com.yly.wiki.controller;
 
 import com.yly.wiki.entity.Content;
+import com.yly.wiki.entity.Doc;
 import com.yly.wiki.req.DocQueryReq;
 import com.yly.wiki.req.DocSaveReq;
 import com.yly.wiki.resp.DocResp;
 import com.yly.wiki.resp.CommonResp;
 import com.yly.wiki.resp.PageResp;
 import com.yly.wiki.service.DocService;
+import com.yly.wiki.websocket.WebSocketServer;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,9 @@ public class DocController {
 
     @Resource
     private DocService docService;
+
+    @Resource
+    private WebSocketServer webSocketServer;
 
 
     @GetMapping("/all")
@@ -88,6 +93,8 @@ public class DocController {
     public CommonResp vote(@PathVariable String id) {
         CommonResp resp = new CommonResp<>();
         docService.vote(id);
+        Doc doc = docService.selectDocById(id);
+        webSocketServer.sendInfo( doc.getName()+"被点赞" );
         return resp;
     }
 }
