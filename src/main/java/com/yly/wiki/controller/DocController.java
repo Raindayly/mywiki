@@ -95,4 +95,15 @@ public class DocController {
 
         return resp;
     }
+
+    /**
+     * 统计所有文档
+     */
+    @GetMapping("/docSum")
+    public CommonResp vote() {
+        CommonResp resp = new CommonResp<>();
+        int size = docService.all().size();
+        resp.setContent(size);
+        return resp;
+    }
 }

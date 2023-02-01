@@ -12,4 +12,6 @@ public interface MyDocMapper {
 
     void increaseViewCount(@Param("id") String id);
     void increaseVoteCount(@Param("id") String id);
+    Integer voteSum();
+    Integer viewSum();
 }

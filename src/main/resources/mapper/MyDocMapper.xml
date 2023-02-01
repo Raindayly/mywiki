@@ -14,4 +14,10 @@
     <select id="list" resultType="com.yly.wiki.entity.Test">
         select `id`, `name`, `password` from `test`
     </select>
+    <select id="voteSum" resultType="Integer">
+        select sum(vote_count) from doc
+    </select>
+    <select id="viewSum" resultType="Integer">
+        select sum(view_count) from doc
+    </select>
 </mapper>
