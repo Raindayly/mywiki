@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@wangeditor/editor-for-vue": "^5.1.12",
+    "@wangeditor/plugin-md": "^1.0.0",
     "ant-design-vue": "^2.2.8",
     "axios": "^0.21.0",
     "prismjs": "^1.29.0",

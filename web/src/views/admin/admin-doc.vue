@@ -103,8 +103,12 @@ import axios from "axios";
 import {message} from 'ant-design-vue';
 import {Tool} from "@/util/tool";
 import {useRoute} from "vue-router";
-import { Editor, Toolbar, } from '@wangeditor/editor-for-vue'
-import { createEditor } from '@wangeditor/editor'
+import { Boot } from '@wangeditor/editor'
+import markdownModule from '@wangeditor/plugin-md'
+
+import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
+
+
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
 
 const columns = [
@@ -139,6 +143,9 @@ export default defineComponent({
     /**
      * 富文本
      */
+    //使用markdown语法
+    Boot.registerModule(markdownModule)
+
     // 编辑器实例，必须用 shallowRef
     const editorRef = shallowRef()
     // 内容 HTML
@@ -205,19 +212,34 @@ export default defineComponent({
      * 通过id查询富文本content
      */
     const findContent = () => {
+      try {
+        axios.get("/doc/content/"+doc.value.id).then((res) => {
+          const data = res.data
+          if(data.success) {
+            // editor = createEditor({
+            //   // content 或 html
+            //   // 其他属性
+            // })
+            const editor = editorRef.value
+            if (editor == null) return
+            try {
+              editorRef.value.setHtml(data.content.content);
+            } catch (error) {
+              // fix: 编译预览报错
+              setTimeout(() => {
+                editorRef.value.setHtml(data.content.content);
+              });
+
+            }
+
+
+          }
+        })
+      }catch (e) {
+        console.log(e)
+      }
       //处理富文本bug
-      axios.get("/doc/content/"+doc.value.id).then((res) => {
-        const data = res.data
-        if(data.success) {
-          // editor = createEditor({
-          //   // content 或 html
-          //   // 其他属性
-          // })
-          const editor = editorRef.value
-          if (editor == null) return
-          editorRef.value.setHtml(data.content.content)
-        }
-      })
+
     }
     /**
      * 搜索
