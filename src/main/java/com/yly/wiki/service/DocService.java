@@ -5,6 +5,8 @@ import com.github.pagehelper.PageInfo;
 import com.yly.wiki.entity.Content;
 import com.yly.wiki.entity.Doc;
 import com.yly.wiki.entity.DocExample;
+import com.yly.wiki.exception.BusinessException;
+import com.yly.wiki.exception.BusinessExceptionCode;
 import com.yly.wiki.mapper.ContentMapper;
 import com.yly.wiki.mapper.DocMapper;
 import com.yly.wiki.mapper.MyDocMapper;
@@ -13,9 +15,12 @@ import com.yly.wiki.req.DocSaveReq;
 import com.yly.wiki.resp.DocResp;
 import com.yly.wiki.resp.PageResp;
 import com.yly.wiki.util.CopyUtil;
+import com.yly.wiki.util.RedisUtil;
+import com.yly.wiki.util.RequestContext;
 import com.yly.wiki.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -40,6 +45,12 @@ public class DocService {
 
     @Resource
     private SnowFlake snowFlake;
+
+    @Resource
+    public RedisUtil redisUtil;
+
+    @Resource
+    public WsService wsService;
 
 
     public PageResp<DocResp> list(DocQueryReq req) {
@@ -134,7 +145,7 @@ public class DocService {
     }
 
     public Content findContent(String id) {
-        myDocMapper.updateViewCount(id);
+        myDocMapper.increaseViewCount(id);
         return contentMapper.selectByPrimaryKey(id);
     }
 
@@ -151,7 +162,17 @@ public class DocService {
     }
 
     public void vote(String id) {
-        myDocMapper.updateVoteCount(id);
+        String ip = RequestContext.getRemoteAddr();
+        if (redisUtil.validateRepeat("DOC_VOTE_" + id + "_" + ip, 5000)) {
+            myDocMapper.increaseVoteCount(id);
+        } else {
+            throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
+        }
+
+        Doc doc = docMapper.selectByPrimaryKey(id);
+        //获取日志流水号
+        String logId = MDC.get("LOG_ID");
+        wsService.sendInfo( doc.getName()+"被点赞" ,logId);
     }
 
     public Doc selectDocById(String id) {

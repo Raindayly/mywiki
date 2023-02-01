@@ -10,6 +10,6 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface MyDocMapper {
 
-    void updateViewCount(@Param("id") String id);
-    void updateVoteCount(@Param("id") String id);
+    void increaseViewCount(@Param("id") String id);
+    void increaseVoteCount(@Param("id") String id);
 }

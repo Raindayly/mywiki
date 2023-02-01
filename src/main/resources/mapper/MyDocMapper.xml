@@ -5,10 +5,10 @@
 <!--         这里使用#{} 使用 ${}有被sql注入的风险-->
 <!--      #{}是简单的字符串替换-->
 <!--        ${}是语句替换-->
-    <update id="updateViewCount">
+    <update id="increaseViewCount">
         update doc set view_count = view_count + 1 where  id = #{id}
     </update>
-    <update id="updateVoteCount">
+    <update id="increaseVoteCount">
         update doc set vote_count = vote_count + 1 where  id = #{id}
     </update>
     <select id="list" resultType="com.yly.wiki.entity.Test">
