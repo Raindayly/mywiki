@@ -9,4 +9,8 @@ package com.yly.wiki.mapper;
 public interface MyEbookMapper {
 
     void updateEbookInfo();
+
+    void getEbookStatistic();
+
+
 }
