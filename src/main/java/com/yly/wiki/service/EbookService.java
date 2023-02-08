@@ -83,7 +83,12 @@ public class EbookService {
         ebookMapper.deleteByPrimaryKey(id);
     }
 
+
+    /**
+     * 更新ebook信息，总数，点赞数，阅读数，文档数
+     */
     public void updateEbookTiming() {
         myEbookMapper.updateEbookInfo();
     }
+
 }
