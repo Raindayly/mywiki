@@ -65,7 +65,7 @@ import { StarOutlined, LikeOutlined, MessageOutlined } from '@ant-design/icons-v
 import axios from 'axios'
 import {message} from "ant-design-vue";
 import { Tool } from '@/util/tool';
-import  TheWelcome from '@/components/TheWelcome.vue'
+import  TheWelcome from '@/components/TheWelcome/TheWelcome.vue'
 
 
 export default defineComponent({
