@@ -6,17 +6,17 @@
           <a-spin size="large" v-if="!spin1" :delay="500"/>
           <template v-else>
             <a-space :size="size1">
-              <a-statistic title="总文章数" :value="docSum" style="margin-right: 50px">
+              <a-statistic title="总文章数" :value="docSum" >
                 <template #prefix>
                   <LayoutOutlined />
                 </template>
               </a-statistic>
-              <a-statistic title="总点赞数" :value="voteSum" style="margin-right: 50px">
+              <a-statistic title="总点赞数" :value="voteSum">
                 <template #prefix>
                   <like-outlined />
                 </template>
               </a-statistic>
-              <a-statistic title="总阅读数" :value="viewSum" style="margin-right: 50px">
+              <a-statistic title="总阅读数" :value="viewSum">
                 <template #prefix>
                   <MehOutlined />
                 </template>
@@ -30,18 +30,23 @@
         <div  class="dashboard">
           <a-spin size="large" v-if="!spin2" :delay="500"/>
           <template v-else >
-            <a-space :size="size1">
-              <a-statistic title="今日阅读数" :value="todayData.viewCount" style="margin-right: 50px">
+            <a-space :size="size2">
+              <a-statistic title="今日阅读数" :value="todayData.viewCount">
                 <template #prefix>
                   <LayoutOutlined />
                 </template>
               </a-statistic>
-              <a-statistic  title="今日点赞数" :value="todayData.voteCount" style="margin-right: 50px">
+              <a-statistic  title="今日点赞数" :value="todayData.voteCount">
                 <template #prefix>
                   <like-outlined />
                 </template>
               </a-statistic>
-              <a-statistic  title="点赞率" suffix="%" :value-style="{ color: voteRate >= 100 ?'#3f8600':'#cf1322' }" :value="voteRate" style="margin-right: 50px">
+              <a-statistic  title="预计今日阅读数" :value="expectViewCount">
+                <template #prefix>
+                  <like-outlined />
+                </template>
+              </a-statistic>
+              <a-statistic  title="点赞率" suffix="%" :value-style="{ color: voteRate >= 100 ?'#3f8600':'#cf1322' }" :value="voteRate">
                 <template #prefix>
                   <arrow-up-outlined v-if="voteRate >= 100" />
                   <arrow-down-outlined v-else />
@@ -56,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onMounted, ref} from "vue";
+  import {computed, onMounted, ref} from "vue";
   import axios from "axios";
   import {homeData} from "@/components/TheWelcome/entity/homeData";
 
@@ -70,14 +75,15 @@ import {computed, onMounted, ref} from "vue";
   const spin3 = ref(false)
 
   //间距1
-  const size1 = 50
+  const size1 = 100
+  //间距2
+  const size2 = 60
 
   const todayData = ref(new homeData())
   const yesterdayData = ref(new homeData())
 
   //点赞率
   const voteRate = computed(()=>{
-    console.log(1/0)
     let result = (todayData.value.voteCount / todayData.value.viewCount) * 100
     if(Number.isNaN(result) || !Number.isFinite(result)){
       return 0
@@ -85,6 +91,15 @@ import {computed, onMounted, ref} from "vue";
       return  result
     }
   })
+
+  //预计增长数
+  const expectViewCount = computed(() => {
+    let nowDate = new Date()
+    let nowDateMS = nowDate.getHours() * 3600 * 1000 + nowDate.getMinutes() * 1000 + nowDate.getMilliseconds()
+    let oneDayMS = 3600 * 24 * 1000
+    return Math.floor((nowDateMS / oneDayMS) * yesterdayData.value.viewCount)
+  })
+
 
   onMounted(() => {
     setTimeout(()=>{
@@ -117,5 +132,12 @@ import {computed, onMounted, ref} from "vue";
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+  /*
+  css样式在scoped中属性选择器默认加载末尾，加上>>>会加在>>>之前
+  */
+  .ant-statistic >>> .ant-statistic-title,.ant-statistic >>> .ant-statistic-content{
+    display: flex !important;
+    justify-content: center !important;
   }
 </style>
