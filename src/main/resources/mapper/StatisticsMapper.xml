@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yly.wiki.mapper.StatisticsMapper">
+
+
+    <select id="getStatistics" resultType="com.yly.wiki.resp.StatisticsResp">
+        select t1.`date` as `date`,
+               sum(t1.view_count) as viewCount,
+               sum(t1.vote_count) as voteCount,
+               sum(t1.view_increase) as viewIncrease,
+               sum(t1.vote_increase) as voteIncrease
+        from ebook_snapshot t1
+        where t1.`date` >= date_sub(curdate(), interval 1 day)
+        group by t1.`date`
+        order by t1.`date` asc
+    </select>
+</mapper>
