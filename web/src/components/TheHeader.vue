@@ -30,6 +30,11 @@
               用户管理
             </router-link>
           </a-menu-item>
+          <a-menu-item key="/admin/role" v-if="userInfo.id">
+            <router-link to="/admin/role">
+              角色管理
+            </router-link>
+          </a-menu-item>
           <a-menu-item key="/about">
             <router-link to="/about">
               关于

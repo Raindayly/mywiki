@@ -8,6 +8,7 @@ import AdminDoc from "@/views/admin/admin-doc.vue";
 import adminUser from "@/views/admin/admin-user.vue";
 import store from "@/store";
 import {Tool} from "@/util/tool";
+import AdminRole from "@/views/admin/admin-role.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -57,6 +58,14 @@ const routes: Array<RouteRecordRaw> = [
     path: '/admin/doc',
     name: 'AdminDoc',
     component: AdminDoc,
+    meta: {
+      loginRequire: true
+    }
+  },
+  {
+    path: '/admin/role',
+    name: 'AdminRole',
+    component: AdminRole,
     meta: {
       loginRequire: true
     }
