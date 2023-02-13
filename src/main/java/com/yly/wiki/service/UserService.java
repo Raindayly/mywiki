@@ -18,11 +18,13 @@ import com.yly.wiki.util.CopyUtil;
 import com.yly.wiki.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -55,6 +57,16 @@ public class UserService {
         LOG.info("总行数：{}", pageInfo.getTotal());
         LOG.info("总页数：{}", pageInfo.getPages());
 
+
+        ArrayList<UserResp> userResps = new ArrayList<>();
+        userList.forEach( item ->{
+            String[] split = item.getRoles().split(",");
+            UserResp userResp = new UserResp();
+            BeanUtils.copyProperties(item,userResp);
+            userResp.setRoles(split);
+            userResps.add(userResp);
+        });
+
         // List<UserResp> respList = new ArrayList<>();
         // for (User user : userList) {
         //     // UserResp userResp = new UserResp();
@@ -66,11 +78,12 @@ public class UserService {
         // }
 
         // 列表复制
-        List<UserResp> list = CopyUtil.copyList(userList, UserResp.class);
+
+
 
         PageResp<UserResp> pageResp = new PageResp();
         pageResp.setTotal(pageInfo.getTotal());
-        pageResp.setList(list);
+        pageResp.setList(userResps);
 
         return pageResp;
     }
