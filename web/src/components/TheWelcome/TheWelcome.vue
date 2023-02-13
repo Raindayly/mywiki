@@ -127,7 +127,11 @@
         const { data } = res
         if(data.success) {
           spin2.value = true;
-          [yesterdayData.value ,todayData.value] =  data.content
+          if(data.content.length === 1){
+            [todayData.value] =  data.content
+          } else if (data.content.length === 2){
+            [yesterdayData.value ,todayData.value] =  data.content
+          }
         }
         console.log(todayData.value,yesterdayData.value)
       })

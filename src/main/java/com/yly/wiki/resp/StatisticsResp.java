@@ -14,7 +14,13 @@ public class StatisticsResp {
 
     Integer viewIncrease;
 
-
+    public StatisticsResp(Date date, Integer voteCount, Integer viewCount, Integer voteIncrease, Integer viewIncrease) {
+        this.date = date;
+        this.voteCount = voteCount;
+        this.viewCount = viewCount;
+        this.voteIncrease = voteIncrease;
+        this.viewIncrease = viewIncrease;
+    }
 
     public Date getDate() {
         return date;
