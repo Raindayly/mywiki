@@ -29,6 +29,16 @@
                  :pagination="pagination"
                  @change="handleTableChange"
         >
+          <template #roles="{ text, record }">
+            <a-space direction="vertical">
+              <a-tag color="#55acee" v-for="item in record.roles" :key="item.roleId">
+                <template #icon>
+                  <twitter-outlined />
+                </template>
+                {{ item.roleName }}
+              </a-tag>
+            </a-space>
+          </template>
           <template #action="{ text, record }">
             <a-space>
               <a-button type="primary" @click="resetPassword(record)">重置密码</a-button>
@@ -104,6 +114,10 @@ const columns = [
     title: '密码',
     dataIndex: 'password',
     slots: {customRender: 'password'},
+  },
+  {
+    title: '角色',
+    slots: {customRender: 'roles'},
   },
   {
     title: '操作',
