@@ -24,7 +24,7 @@ public class DocJob {
     /**
      * 每30秒更新电子书信息
      */
-    @Scheduled(cron = "0 0 0/1 * * ?")
+    @Scheduled(cron = "0 0/1 * * * ? ")
     public void cron() {
         // 增加日志流水号
         MDC.put("LOG_ID", String.valueOf(snowFlake.nextId()));
@@ -33,5 +33,6 @@ public class DocJob {
         ebookService.updateEbookTiming();
         LOG.info("更新电子书下的文档数据结束，耗时：{}毫秒", System.currentTimeMillis() - start);
     }
+
 
 }
