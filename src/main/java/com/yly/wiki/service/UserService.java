@@ -2,6 +2,7 @@ package com.yly.wiki.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.yly.wiki.entity.Role;
 import com.yly.wiki.entity.User;
 import com.yly.wiki.entity.UserExample;
 import com.yly.wiki.exception.BusinessException;
@@ -25,6 +26,7 @@ import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -36,6 +38,9 @@ public class UserService {
 
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private RoleService roleService;
 
     @Resource
     private SnowFlake snowFlake;
@@ -60,10 +65,20 @@ public class UserService {
 
         ArrayList<UserResp> userResps = new ArrayList<>();
         userList.forEach( item ->{
-            String[] split = item.getRoles().split(",");
+
+            String[] roles = item.getRoles().split(",");
+
+            ArrayList<String> rolesIds = new ArrayList<>(Arrays.asList(roles));
+
+            ArrayList<Role> roleS = new ArrayList<>();
+
+            rolesIds.forEach(rolesId -> {
+                roleS.add(findRoleByRoleId(rolesId));
+            });
+
             UserResp userResp = new UserResp();
             BeanUtils.copyProperties(item,userResp);
-            userResp.setRoles(split);
+            userResp.setRoles(roleS);
             userResps.add(userResp);
         });
 
@@ -157,6 +172,12 @@ public class UserService {
         List<User> users = userMapper.selectByExample(userExample);
         return users.get(0);
     }
+
+    public Role findRoleByRoleId(String roleId) {
+        return roleService.getRoleByRoleId(roleId);
+    }
+
+
 
     public UserLoginResp login(UserLoginReq req) {
         //拿到用户名一致的第一个用户信息

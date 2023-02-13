@@ -77,4 +77,12 @@ public class RoleService {
     }
 
 
+    /**
+     * 获取role
+     * @param roleId
+     * @return role
+     */
+    public Role getRoleByRoleId(String roleId) {
+        return roleMapper.selectByPrimaryKey(roleId);
+    }
 }

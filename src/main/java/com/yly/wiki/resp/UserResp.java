@@ -1,5 +1,9 @@
 package com.yly.wiki.resp;
 
+import com.yly.wiki.entity.Role;
+
+import java.util.ArrayList;
+
 public class UserResp {
     private String id;
 
@@ -7,7 +11,7 @@ public class UserResp {
 
     private String nickName;
 
-    private String[] roles;
+    private ArrayList<Role> roles;
 
     private String password;
 
@@ -39,11 +43,11 @@ public class UserResp {
         return password;
     }
 
-    public String[] getRoles() {
+    public ArrayList<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(String[] roles) {
+    public void setRoles(ArrayList<Role> roles) {
         this.roles = roles;
     }
 
