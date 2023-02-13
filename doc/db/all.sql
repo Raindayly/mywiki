@@ -134,3 +134,18 @@ create table `ebook_snapshot`(
     vote_increase int not null default 0 comment '点赞增长',
 primary key (`id`)
 )engine=innodb default charset=utf8mb4 comment='电子书快照表';
+
+
+#角色表
+create table if not exists wikidev.`role`
+(
+    `role_id` varchar(20) not null comment '角色id' primary key,
+    `role_name` varchar(50) not null comment '角色中文名',
+    unique key `role_id_unique` (`role_id`),
+    unique key `role_name_unique` (`role_name`)
+) engine = innodb default charset = utf8mb4 comment '角色';
+
+insert into role (`role_id`,`role_name`) values ('0','默认用户');
+
+#给用户表添加角色字段，保存角色id
+alter table user add roles varchar(200) default 0
