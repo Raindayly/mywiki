@@ -13,4 +13,6 @@ import java.util.List;
 public interface StatisticsMapper {
 
     List<StatisticsResp> getStatistics();
+
+    List<StatisticsResp> getChart();
 }

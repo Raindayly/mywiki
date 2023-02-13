@@ -5,7 +5,7 @@ module.exports = {
   },
   'extends': [
     'plugin:vue/vue3-essential',
-    'eslint:recommended',
+    // 'eslint:recommended',
     '@vue/typescript/recommended'
   ],
   parserOptions: {
@@ -13,10 +13,6 @@ module.exports = {
   },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'vue/no-unused-vars': 0,
-    '@typescript-eslint/no-unused-vars': 0,
-    'vue/no-unused-components': 0,
-    '@typescript-eslint/explicit-module-boundary-types': 0
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off'
   }
 }

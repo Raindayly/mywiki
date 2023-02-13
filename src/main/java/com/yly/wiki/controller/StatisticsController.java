@@ -51,4 +51,18 @@ public class StatisticsController {
         resp.setContent(statistics);
         return resp;
     }
+
+    /**
+     *
+     * 首页统计图 ， 30天的数据
+     *
+     */
+
+    @GetMapping("/chart")
+    public CommonResp getChart() {
+        CommonResp resp = new CommonResp<>();
+        List<StatisticsResp> statistics = statisticsService.getChart();
+        resp.setContent(statistics);
+        return resp;
+    }
 }

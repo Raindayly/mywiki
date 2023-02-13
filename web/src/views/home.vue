@@ -22,8 +22,8 @@
           </a-sub-menu>
         </a-menu>
       </a-layout-sider>
-      <a-layout-content :style="{ padding: '0 24px', minHeight: '280px' }">
-        <div class="welcome" v-show="isWelcome">
+      <a-layout-content :style="{ padding: '0 24px', minHeight: '280px',width: 'calc(100% - 200px )' }">
+        <div class="welcome" style="width: 100%;" v-show="isWelcome">
           <the-welcome></the-welcome>
         </div>
         <a-list v-show="!isWelcome" :loading="loading" item-layout="vertical" size="large" :grid="{ gutter: 20, column: 3 }"  :data-source="books">

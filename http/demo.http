@@ -2,3 +2,5 @@ GET http://localhost:8880/demo/list
 
 ###
 GET http://localhost:8880/statistics/sum
+###
+GET http://localhost:8880/statistics/chart

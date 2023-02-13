@@ -1,66 +1,77 @@
 <template>
-  <div >
-    <a-row :gutter="[24,48]">
-      <a-col :span="12">
-        <div class="dashboard">
-          <a-spin size="large" v-if="!spin1" :delay="500"/>
-          <template v-else>
-            <a-space :size="size1">
-              <a-statistic title="总文章数" :value="docSum" >
-                <template #prefix>
-                  <LayoutOutlined />
-                </template>
-              </a-statistic>
-              <a-statistic title="总点赞数" :value="voteSum">
-                <template #prefix>
-                  <like-outlined />
-                </template>
-              </a-statistic>
-              <a-statistic title="总阅读数" :value="viewSum">
-                <template #prefix>
-                  <MehOutlined />
-                </template>
-              </a-statistic>
-            </a-space>
-          </template>
+  <div>
+    <a-space direction="vertical" style="width: 100%">
+      <a-row :gutter="[12,0]">
+        <a-col :span="12">
+          <div class="dashboard">
+            <a-spin size="large" v-if="!spin1" :delay="500"/>
+            <template v-else>
+              <a-space :size="size1">
+                <a-statistic title="总文章数" :value="docSum" >
+                  <template #prefix>
+                    <LayoutOutlined />
+                  </template>
+                </a-statistic>
+                <a-statistic title="总点赞数" :value="voteSum">
+                  <template #prefix>
+                    <like-outlined />
+                  </template>
+                </a-statistic>
+                <a-statistic title="总阅读数" :value="viewSum">
+                  <template #prefix>
+                    <MehOutlined />
+                  </template>
+                </a-statistic>
+              </a-space>
+            </template>
 
-        </div>
-      </a-col>
-      <a-col :span="12">
-        <div  class="dashboard">
-          <a-spin size="large" v-if="!spin2" :delay="500"/>
-          <template v-else >
-            <a-space :size="size2">
-              <a-statistic title="今日阅读数" :value="todayData.viewCount">
-                <template #prefix>
-                  <LayoutOutlined />
-                </template>
-              </a-statistic>
-              <a-statistic  title="今日点赞数" :value="todayData.voteCount">
-                <template #prefix>
-                  <like-outlined />
-                </template>
-              </a-statistic>
-              <a-statistic  title="预计今日阅读数" :value="expectViewCount">
-                <template #prefix>
-                  <like-outlined />
-                </template>
-              </a-statistic>
-              <a-statistic  title="点赞率" suffix="%" :value-style="{ color: voteRate >= 100 ?'#3f8600':'#cf1322' }" :value="voteRate">
-                <template #prefix>
-                  <arrow-up-outlined v-if="voteRate >= 100" />
-                  <arrow-down-outlined v-else />
-                </template>
-              </a-statistic>
-            </a-space>
-          </template>
-        </div>
-      </a-col>
-    </a-row>
+          </div>
+        </a-col>
+        <a-col :span="12">
+          <div  class="dashboard">
+            <a-spin size="large" v-if="!spin2" :delay="500"/>
+            <template v-else >
+              <template v-if="!todayData">
+                暂无数据
+              </template>
+              <template v-else>
+                <a-space :size="size2">
+                  <a-statistic title="今日阅读数" :value="todayData.viewIncrease">
+                    <template #prefix>
+                      <LayoutOutlined />
+                    </template>
+                  </a-statistic>
+                  <a-statistic  title="今日点赞数" :value="todayData.voteIncrease">
+                    <template #prefix>
+                      <like-outlined />
+                    </template>
+                  </a-statistic>
+                  <a-statistic  title="预计今日阅读数" :value="expectViewCount">
+                    <template #prefix>
+                      <like-outlined />
+                    </template>
+                  </a-statistic>
+                  <a-statistic  title="今日点赞率" suffix="%" :value-style="{ color: voteRate >= 100 ?'#3f8600':'#cf1322' }" :value="voteRate">
+                    <template #prefix>
+                      <arrow-up-outlined v-if="voteRate >= 100" />
+                      <arrow-down-outlined v-else />
+                    </template>
+                  </a-statistic>
+                </a-space>
+              </template>
+            </template>
+          </div>
+        </a-col>
+      </a-row >
+      <a-row>
+        <Chart></Chart>
+      </a-row>
+    </a-space>
   </div>
 </template>
 
 <script setup lang="ts">
+  import  Chart  from "@/components/TheWelcome/components/chart.vue"
   import {computed, onMounted, ref} from "vue";
   import axios from "axios";
   import {homeData} from "@/components/TheWelcome/entity/homeData";
@@ -79,16 +90,16 @@
   //间距2
   const size2 = 60
 
-  const todayData = ref(new homeData())
-  const yesterdayData = ref(new homeData())
+  const todayData = ref<homeData>()
+  const yesterdayData = ref<homeData>()
 
   //点赞率
   const voteRate = computed(()=>{
-    let result = (todayData.value.voteCount / todayData.value.viewCount) * 100
+    let result = (todayData.value!.voteIncrease / todayData.value!.viewIncrease) * 100
     if(Number.isNaN(result) || !Number.isFinite(result)){
       return 0
     } else {
-      return  result
+      return  Math.floor(result)
     }
   })
 
@@ -97,7 +108,7 @@
     let nowDate = new Date()
     let nowDateMS = nowDate.getHours() * 3600 * 1000 + nowDate.getMinutes() * 1000 + nowDate.getMilliseconds()
     let oneDayMS = 3600 * 24 * 1000
-    return Math.floor((nowDateMS / oneDayMS) * yesterdayData.value.viewCount)
+    return Math.floor((nowDateMS / oneDayMS) * yesterdayData.value!.viewIncrease)
   })
 
 
@@ -120,7 +131,7 @@
         }
         console.log(todayData.value,yesterdayData.value)
       })
-    },2000)
+    },1000)
 
   })
 </script>
@@ -134,9 +145,9 @@
     align-items: center;
   }
   /*
-  css样式在scoped中属性选择器默认加载末尾，加上>>>会加在>>>之前
+  css样式在scoped中属性选择器默认加载末尾，加上>>>会加在>>>之前或者使用:deep()
   */
-  .ant-statistic >>> .ant-statistic-title,.ant-statistic >>> .ant-statistic-content{
+  .ant-statistic:deep(.ant-statistic-title),.ant-statistic:deep(.ant-statistic-content) {
     display: flex !important;
     justify-content: center !important;
   }

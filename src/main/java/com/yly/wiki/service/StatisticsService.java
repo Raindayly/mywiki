@@ -39,4 +39,11 @@ public class StatisticsService {
         return statisticsMapper.getStatistics();
     }
 
+
+    public List<StatisticsResp> getChart(){
+        return statisticsMapper.getChart();
+    }
+
+
+
 }

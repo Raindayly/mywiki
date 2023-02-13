@@ -1,16 +1,18 @@
 export class homeData {
 
-    private _viewCount
-    private _voteCount
-    private _viewIncrease
-    private _voteIncrease
+    _date
+    _viewCount
+    _voteCount
+    _viewIncrease
+    _voteIncrease
 
 
-    constructor(viewCount = 0, voteCount = 0, viewIncrease= 0, voteIncrease= 0) {
+    constructor(date :Date, viewCount = 0, voteCount = 0, viewIncrease= 0, voteIncrease= 0) {
         this._viewCount = viewCount;
         this._voteCount = voteCount;
         this._viewIncrease = viewIncrease;
         this._voteIncrease = voteIncrease;
+        this._date = date
     }
 
 
@@ -44,5 +46,12 @@ export class homeData {
 
     set voteIncrease(value: number) {
         this._voteIncrease = value;
+    }
+    get date() {
+        return this._date;
+    }
+
+    set date(value) {
+        this._date = value;
     }
 }
