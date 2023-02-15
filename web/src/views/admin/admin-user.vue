@@ -41,6 +41,7 @@
           </template>
           <template #action="{ text, record }">
             <a-space>
+              <a-button type="primary" @click="editRoles(record)">角色配置</a-button>
               <a-button type="primary" @click="resetPassword(record)">重置密码</a-button>
               <a-button type="primary" @click="edit(record)">编辑</a-button>
               <a-popconfirm
@@ -88,6 +89,29 @@
       </a-form-item>
     </a-form>
   </a-modal>
+  <a-modal
+      title="角色配置"
+      v-model:visible="editRoleModal"
+      :confirm-loading="editRoleModalLoading"
+      @ok="roleSettingOk"
+  >
+    <a-form :model="curRoles" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+      <a-form-item label="选择角色">
+        <a-select
+            v-model:value="curRoles"
+            mode="multiple"
+            style="width: 100%"
+            placeholder="Please select"
+            option-label-prop="label"
+            :options="allRoles"
+        >
+          <template #option="{value,label}">
+            &nbsp;&nbsp;{{ label }}
+          </template>
+        </a-select>
+      </a-form-item>
+    </a-form>
+ </a-modal>
 
 </template>
 
@@ -141,6 +165,31 @@ export default defineComponent({
       loginName: '',
       nickName: ''
     })
+    const value = ref(['china']);
+
+    const options = ref([
+      {
+        value: 'china',
+        label: 'China (中国)',
+        icon: '🇨🇳',
+      },
+      {
+        value: 'usa',
+        label: 'USA (美国)',
+        icon: '🇺🇸',
+      },
+      {
+        value: 'japan',
+        label: 'Japan (日本)',
+        icon: '🇯🇵',
+      },
+      {
+        value: 'korea',
+        label: 'Korea (韩国)',
+        icon: '🇨🇰',
+      },
+    ]);
+
 
     // -------- 表单 ---------
     /**
@@ -270,6 +319,31 @@ export default defineComponent({
         message.error(err)
       })
     }
+    /**
+     *
+     * 角色配置
+     */
+    const editRoleModal = ref(false)
+    const editRoleModalLoading = ref(false)
+    const allRoles = ref()
+    const curRoles = ref()
+    const editRoles = (userinfo: any)=> {
+      user.value = userinfo
+      console.log(user.value)
+      editRoleModal.value = true
+      axios.get(`/user/allRoles`).then(res => {
+        let data = res.data
+        if(data.success) {
+          allRoles.value = data.content.map((_:any) => {
+            return {
+              value:_.roleId,
+              label:_.roleName
+            }
+          })
+          curRoles.value = userinfo.roles.map((item: any) => item.roleId)
+        }
+      })
+    }
 
     const level1 = ref();
     let categorys: any;
@@ -336,6 +410,21 @@ export default defineComponent({
         }
       })
     }
+    const roleSettingOk = () => {
+      // user.value.roles = curRoles.value.join(",")
+      let params = Tool.copy(user.value)
+      params.roles = curRoles.value.join(",")
+     axios.post('/user/save',params).then(res => {
+      let data = res.data
+       if(data.success) {
+         message.success('保存成功')
+         editRoleModal.value = false
+         handleQueryCategory()
+       }else {
+         message.error(data.message)
+       }
+     })
+    }
     const handleTableChange = (pagination: any) => {
       handleQuery({
         page: pagination.current,
@@ -372,8 +461,19 @@ export default defineComponent({
       resetModalLoading,
       resetPasswordModalVisible,
       handleResetModalOk,
-      resetPassword
+      resetPassword,
 
+      //角色配置
+      editRoles,
+      allRoles,
+      curRoles,
+      editRoleModal,
+      editRoleModalLoading,
+
+      value,
+      options,
+
+      roleSettingOk
     };
   },
   components: {},

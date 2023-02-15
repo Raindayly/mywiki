@@ -1,5 +1,6 @@
 package com.yly.wiki.req;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -15,6 +16,29 @@ public class UserSaveReq {
     @NotNull(message = "【密码】不能为空")
     @Pattern(regexp = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,32}$", message = "【密码】至少包含 数字和英文，长度6-32")
     private String password;
+
+    @NotNull(message = "[角色]不能为空")
+    @NotBlank(message = "[角色]不能为空")
+    private String roles;
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+
+    @Override
+    public String toString() {
+        return "UserSaveReq{" +
+                "id='" + id + '\'' +
+                ", loginName='" + loginName + '\'' +
+                ", nickName='" + nickName + '\'' +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
+                '}';
+    }
+
+    public String getRoles() {
+        return roles;
+    }
 
     public String getId() {
         return id;
@@ -48,17 +72,4 @@ public class UserSaveReq {
         this.password = password;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", loginName=").append(loginName);
-        sb.append(", nickName=").append(nickName);
-        sb.append(", password=").append(password);
-        sb.append("]");
-        return sb.toString();
-    }
 }

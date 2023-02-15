@@ -85,4 +85,14 @@ public class RoleService {
     public Role getRoleByRoleId(String roleId) {
         return roleMapper.selectByPrimaryKey(roleId);
     }
+
+    public List<RoleResp> allRoles() {
+        RoleExample roleExample = new RoleExample();
+        List<Role> roleList = roleMapper.selectByExample(roleExample);
+
+        // 列表复制
+        List<RoleResp> list = CopyUtil.copyList(roleList, RoleResp.class);
+
+        return list;
+    }
 }

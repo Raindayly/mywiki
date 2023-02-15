@@ -13,6 +13,7 @@ import com.yly.wiki.req.UserQueryReq;
 import com.yly.wiki.req.UserResetPasswordReq;
 import com.yly.wiki.req.UserSaveReq;
 import com.yly.wiki.resp.PageResp;
+import com.yly.wiki.resp.RoleResp;
 import com.yly.wiki.resp.UserLoginResp;
 import com.yly.wiki.resp.UserResp;
 import com.yly.wiki.util.CopyUtil;
@@ -25,6 +26,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -107,18 +109,23 @@ public class UserService {
      * 保存
      * @param req
      */
-    public void save(UserSaveReq req) {
+    public void save(@Valid UserSaveReq req) {
         User user = CopyUtil.copy(req, User.class);
+        String roleStr = req.getRoles();
         if(ObjectUtils.isEmpty(req.getId())) {
+            //新增
             user.setId(String.valueOf(snowFlake.nextId()));
+            user.setRoles("0");
             if(ObjectUtils.isEmpty(findUserByLoginName(req.getLoginName()))){
                 userMapper.insert(user);
             } else {
                 throw new BusinessException(BusinessExceptionCode.USER_LOGIN_NAME_EXIST);
             }
         }else {
+            //修改
             user.setLoginName(null);
             user.setPassword(null);
+            user.setRoles(roleStr);
             userMapper.updateByPrimaryKeySelective(user);
         }
     }
@@ -148,9 +155,15 @@ public class UserService {
 
         // 列表复制
         List<UserResp> list = CopyUtil.copyList(userList, UserResp.class);
-        
+
         return list;
 
+    }
+    /**
+     * 查询角色
+     */
+    public List<RoleResp> allRoles() {
+        return roleService.allRoles();
     }
 
     public User selectByLoginName(String LoginName) {
@@ -165,12 +178,12 @@ public class UserService {
         }
     }
 
-    public User findUserByLoginName(String loginName) {
+    public List<User> findUserByLoginName(String loginName) {
         UserExample userExample = new UserExample();
         UserExample.Criteria criteria = userExample.createCriteria();
         criteria.andLoginNameEqualTo(loginName);
         List<User> users = userMapper.selectByExample(userExample);
-        return users.get(0);
+        return users;
     }
 
     public Role findRoleByRoleId(String roleId) {

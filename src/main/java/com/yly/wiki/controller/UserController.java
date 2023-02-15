@@ -5,10 +5,7 @@ import com.yly.wiki.req.UserLoginReq;
 import com.yly.wiki.req.UserQueryReq;
 import com.yly.wiki.req.UserResetPasswordReq;
 import com.yly.wiki.req.UserSaveReq;
-import com.yly.wiki.resp.CommonResp;
-import com.yly.wiki.resp.PageResp;
-import com.yly.wiki.resp.UserLoginResp;
-import com.yly.wiki.resp.UserResp;
+import com.yly.wiki.resp.*;
 import com.yly.wiki.service.UserService;
 import com.yly.wiki.util.SnowFlake;
 import org.slf4j.Logger;
@@ -105,4 +102,13 @@ public class UserController {
         LOG.info("从redis中删除token: {}", token);
         return resp;
     }
+
+    @GetMapping("/allRoles")
+    public CommonResp allRoles() {
+        CommonResp<List<RoleResp>> resp = new CommonResp<>();
+        List<RoleResp> roleResps = userService.allRoles();
+        resp.setContent(roleResps);
+        return resp;
+    }
+
 }
