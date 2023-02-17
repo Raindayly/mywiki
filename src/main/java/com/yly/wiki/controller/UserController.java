@@ -1,10 +1,7 @@
 package com.yly.wiki.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.yly.wiki.req.UserLoginReq;
-import com.yly.wiki.req.UserQueryReq;
-import com.yly.wiki.req.UserResetPasswordReq;
-import com.yly.wiki.req.UserSaveReq;
+import com.yly.wiki.req.*;
 import com.yly.wiki.resp.*;
 import com.yly.wiki.service.UserService;
 import com.yly.wiki.util.SnowFlake;
@@ -91,6 +88,14 @@ public class UserController {
         redisTemplate.opsForValue().set(token.toString(), JSONObject.toJSONString(userLoginResp), 3600 * 24, TimeUnit.SECONDS);
 
         resp.setContent(userLoginResp);
+        return resp;
+    }
+
+    @PostMapping("/register")
+    public CommonResp register(@Valid @RequestBody UserRegisterReq req) {
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp<UserLoginResp> resp = new CommonResp<>();
+        resp.setSuccess(userService.register(req));
         return resp;
     }
 

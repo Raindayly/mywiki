@@ -60,6 +60,9 @@
         <a class="login-menu" v-if="!userInfo.id" @click="showLoginModal">
           <span>登录</span>
         </a>
+        <a class="login-menu" v-if="!userInfo.id" @click="showRegisterModal">
+          <span>注册</span>
+        </a>
       </a-col>
     </a-row>
     <a-modal
@@ -74,6 +77,21 @@
         </a-form-item>
         <a-form-item label="密码">
           <a-input v-model:value="loginUser.password" type="password" />
+        </a-form-item>
+      </a-form>
+    </a-modal>
+    <a-modal
+        title="注册"
+        v-model:visible="isRegisterModal"
+        :confirm-loading="registerLoading"
+        @ok="register"
+    >
+      <a-form :model="registerUser" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+        <a-form-item label="登录名">
+          <a-input v-model:value="registerUser.loginName" />
+        </a-form-item>
+        <a-form-item label="密码">
+          <a-input v-model:value="registerUser.password" type="password" />
         </a-form-item>
       </a-form>
     </a-modal>
@@ -112,6 +130,14 @@ export default defineComponent({
       isLoginModal.value = true
     }
 
+    const isRegisterModal = ref(false)
+    const registerLoading = ref(false)
+    const showRegisterModal = () => {
+      isRegisterModal.value = true
+    }
+
+
+
     const login = () => {
       let hexMd5Password = hexMd5(loginUser.value.password + KEY)
       loginModalLoading.value = true
@@ -124,6 +150,30 @@ export default defineComponent({
           isLoginModal.value = false
           store.commit("setUser",data.content)
           message.success("登录成功")
+        }else{
+          message.error(data.message)
+        }
+      }).finally(() => {
+        loginModalLoading.value = false
+      })
+    }
+
+    const registerUser = ref()
+    registerUser.value = {
+      loginName: '',
+      password: ''
+    }
+    const register = () => {
+      let hexMd5Password = hexMd5(registerUser.value.password + KEY)
+      loginModalLoading.value = true
+      axios.post('/user/register',{
+        loginName: registerUser.value.loginName,
+        password: hexMd5Password
+      }).then(res => {
+        let data = res.data
+        if(data.success){
+          isRegisterModal.value = false
+          message.success("注册成功")
         }else{
           message.error(data.message)
         }
@@ -149,13 +199,21 @@ export default defineComponent({
     return {
       userInfo,
 
+      //登录
       isLoginModal,
       showLoginModal,
       loginModalLoading,
       login,
       loginUser,
 
-      logout
+      //注册
+      register,
+      registerUser,
+      showRegisterModal,
+      isRegisterModal,
+      registerLoading,
+
+      logout,
 
     }
   }

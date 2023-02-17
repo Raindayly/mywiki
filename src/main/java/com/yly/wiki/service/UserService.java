@@ -8,10 +8,7 @@ import com.yly.wiki.entity.UserExample;
 import com.yly.wiki.exception.BusinessException;
 import com.yly.wiki.exception.BusinessExceptionCode;
 import com.yly.wiki.mapper.UserMapper;
-import com.yly.wiki.req.UserLoginReq;
-import com.yly.wiki.req.UserQueryReq;
-import com.yly.wiki.req.UserResetPasswordReq;
-import com.yly.wiki.req.UserSaveReq;
+import com.yly.wiki.req.*;
 import com.yly.wiki.resp.PageResp;
 import com.yly.wiki.resp.RoleResp;
 import com.yly.wiki.resp.UserLoginResp;
@@ -217,5 +214,25 @@ public class UserService {
     public void resetPassword(UserResetPasswordReq req) {
         User user = CopyUtil.copy(req, User.class);
         userMapper.updateByPrimaryKeySelective(user);
+    }
+
+    public Boolean register(UserRegisterReq req) {
+        //拿到用户名一致的第一个用户信息
+        User userDb = selectByLoginName(req.getLoginName());
+
+        User user = CopyUtil.copy(req, User.class);
+
+        if(ObjectUtils.isEmpty(userDb)){
+            //添加默认角色
+            user.setRoles("0");
+            user.setId(String.valueOf(snowFlake.nextId()));
+            userMapper.insert(user);
+            LOG.info("注册用户{}成功", req.getLoginName());
+            return true;
+        }else {
+            LOG.info("注册：用户名已存在, {}", req.getLoginName());
+            throw new BusinessException(BusinessExceptionCode.REGISTER_USER_ERROR);
+        }
+
     }
 }
