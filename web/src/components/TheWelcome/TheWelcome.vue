@@ -6,7 +6,7 @@
           <div class="dashboard">
             <a-spin size="large" v-if="!spin1" :delay="500"/>
             <template v-else>
-              <a-space :size="size1">
+              <a-space style="min-width: 300px" :size="size1">
                 <a-statistic title="总文章数" :value="docSum" >
                   <template #prefix>
                     <LayoutOutlined />
@@ -86,9 +86,9 @@
   const spin3 = ref(false)
 
   //间距1
-  const size1 = 100
+  const size1 = 20
   //间距2
-  const size2 = 60
+  const size2 = 20
 
   const todayData = ref<homeData>()
   const yesterdayData = ref<homeData>()
@@ -147,6 +147,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    min-width: 300px;
+  }
+  .dashboard .ant-space {
+    justify-content: space-around
   }
   /*
   css样式在scoped中属性选择器默认加载末尾，加上>>>会加在>>>之前或者使用:deep()
