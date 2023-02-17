@@ -74,6 +74,10 @@ public class CategoryService {
         Category category = CopyUtil.copy(req, Category.class);
         if(ObjectUtils.isEmpty(req.getId())) {
             category.setId(String.valueOf(snowFlake.nextId()));
+
+            //获取当前用户
+            UserLoginResp user = LoginUserContext.getUser();
+            category.setUserId(user.getId());
             categoryMapper.insert(category);
         }else {
             categoryMapper.updateByPrimaryKey(category);

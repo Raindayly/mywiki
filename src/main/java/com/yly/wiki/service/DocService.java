@@ -94,9 +94,14 @@ public class DocService {
         Boolean isHasDoc = !ObjectUtils.isEmpty(docMapper.selectByPrimaryKey(req.getId()));
         Boolean isHasContent = !ObjectUtils.isEmpty(contentMapper.selectByPrimaryKey(req.getId()));
         String id = String.valueOf(snowFlake.nextId());
+
+        //获取当前用户
+        UserLoginResp user = LoginUserContext.getUser();
+
         //没有doc
         if(!isHasDoc) {
             doc.setId(id);
+            doc.setUserId(user.getId());
             docMapper.insert(doc);
             content.setId(id);
             contentMapper.insert(content);

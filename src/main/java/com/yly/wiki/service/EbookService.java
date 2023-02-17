@@ -72,6 +72,9 @@ public class EbookService {
         Ebook ebook = CopyUtil.copy(req, Ebook.class);
         if(ObjectUtils.isEmpty(req.getId())) {
             ebook.setId(String.valueOf(snowFlake.nextId()));
+            //获取当前用户
+            UserLoginResp user = LoginUserContext.getUser();
+            ebook.setUserId(user.getId());
             ebookMapper.insert(ebook);
         }else {
             ebookMapper.updateByPrimaryKey(ebook);

@@ -111,11 +111,9 @@ public class UserService {
      */
     public void save(@Valid UserSaveReq req) {
         User user = CopyUtil.copy(req, User.class);
-        String roleStr = req.getRoles();
         if(ObjectUtils.isEmpty(req.getId())) {
             //新增
             user.setId(String.valueOf(snowFlake.nextId()));
-            user.setRoles("0");
             if(ObjectUtils.isEmpty(findUserByLoginName(req.getLoginName()))){
                 userMapper.insert(user);
             } else {
@@ -125,7 +123,6 @@ public class UserService {
             //修改
             user.setLoginName(null);
             user.setPassword(null);
-            user.setRoles(roleStr);
             userMapper.updateByPrimaryKeySelective(user);
         }
     }

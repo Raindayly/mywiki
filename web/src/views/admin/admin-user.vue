@@ -74,6 +74,20 @@
       <a-form-item label="密码" v-show="!user.id">
         <a-input v-model:value="user.password" type="textarea" placeholder="请输入密码" />
       </a-form-item>
+        <a-form-item label="选择角色">
+          <a-select
+              v-model:value="curRoles"
+              mode="multiple"
+              style="width: 100%"
+              placeholder="Please select"
+              option-label-prop="label"
+              :options="allRoles"
+          >
+            <template #option="{value,label}">
+              &nbsp;&nbsp;{{ label }}
+            </template>
+          </a-select>
+        </a-form-item>
     </a-form>
   </a-modal>
 
@@ -165,31 +179,6 @@ export default defineComponent({
       loginName: '',
       nickName: ''
     })
-    const value = ref(['china']);
-
-    const options = ref([
-      {
-        value: 'china',
-        label: 'China (中国)',
-        icon: '🇨🇳',
-      },
-      {
-        value: 'usa',
-        label: 'USA (美国)',
-        icon: '🇺🇸',
-      },
-      {
-        value: 'japan',
-        label: 'Japan (日本)',
-        icon: '🇯🇵',
-      },
-      {
-        value: 'korea',
-        label: 'Korea (韩国)',
-        icon: '🇨🇰',
-      },
-    ]);
-
 
     // -------- 表单 ---------
     /**
@@ -200,8 +189,12 @@ export default defineComponent({
     const modalLoading = ref(false);
     const handleModalOk = () => {
       modalLoading.value = true;
+
       user.value.password = hexMd5(user.value.password + KEY);
-      axios.post("/user/save", user.value).then((response) => {
+
+      let params = Tool.copy(user.value)
+      params.roles = curRoles.value.join(",")
+      axios.post("/user/save", params).then((response) => {
         modalLoading.value = false;
         const data = response.data; // data = commonResp
         if (data.success) {
@@ -261,6 +254,8 @@ export default defineComponent({
     const edit = (record: any) => {
       modalVisible.value = true;
       user.value = Tool.copy(record);
+      console.log(record)
+      curRoles.value = record.roles.map((item: any) => item.roleId)
     };
 
     /**
@@ -331,18 +326,7 @@ export default defineComponent({
       user.value = userinfo
       console.log(user.value)
       editRoleModal.value = true
-      axios.get(`/user/allRoles`).then(res => {
-        let data = res.data
-        if(data.success) {
-          allRoles.value = data.content.map((_:any) => {
-            return {
-              value:_.roleId,
-              label:_.roleName
-            }
-          })
-          curRoles.value = userinfo.roles.map((item: any) => item.roleId)
-        }
-      })
+      curRoles.value = userinfo.roles.map((item: any) => item.roleId)
     }
 
     const level1 = ref();
@@ -419,6 +403,7 @@ export default defineComponent({
        if(data.success) {
          message.success('保存成功')
          editRoleModal.value = false
+         curRoles.value = []
          handleQueryCategory()
        }else {
          message.error(data.message)
@@ -431,8 +416,23 @@ export default defineComponent({
         size: pagination.pageSize
       })
     }
+     const handleQueryAllRoles = ()=> {
+       axios.get(`/user/allRoles`).then(res => {
+         let data = res.data
+         if(data.success) {
+           allRoles.value = data.content.map((_:any) => {
+             return {
+               value:_.roleId,
+               label:_.roleName
+             }
+           })
+         }
+       })
+     }
+
     onMounted(() => {
       handleQueryCategory()
+      handleQueryAllRoles()
     })
     return {
       loading,
@@ -470,8 +470,6 @@ export default defineComponent({
       editRoleModal,
       editRoleModalLoading,
 
-      value,
-      options,
 
       roleSettingOk
     };
