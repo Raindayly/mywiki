@@ -148,4 +148,9 @@ create table if not exists wikidev.`role`
 insert into role (`role_id`,`role_name`) values ('0','默认用户');
 
 #给用户表添加角色字段，保存角色id
-alter table user add roles varchar(200) default 0
+alter table user add roles varchar(200) default 0;
+
+
+#给文档和电子书表新加用户字段
+alter table doc add user_id varchar(20) not null ;
+alter table ebook add user_id varchar(20) not null ;

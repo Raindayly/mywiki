@@ -15,6 +15,8 @@ public class Doc {
 
     private Integer voteCount;
 
+    private String userId;
+
     public String getId() {
         return id;
     }
@@ -71,6 +73,14 @@ public class Doc {
         this.voteCount = voteCount;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -84,6 +94,7 @@ public class Doc {
         sb.append(", sort=").append(sort);
         sb.append(", viewCount=").append(viewCount);
         sb.append(", voteCount=").append(voteCount);
+        sb.append(", userId=").append(userId);
         sb.append("]");
         return sb.toString();
     }
