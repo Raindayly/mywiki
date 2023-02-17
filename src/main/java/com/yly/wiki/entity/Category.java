@@ -9,6 +9,8 @@ public class Category {
 
     private Integer sort;
 
+    private String userId;
+
     public String getId() {
         return id;
     }
@@ -41,6 +43,14 @@ public class Category {
         this.sort = sort;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -51,6 +61,7 @@ public class Category {
         sb.append(", parent=").append(parent);
         sb.append(", name=").append(name);
         sb.append(", sort=").append(sort);
+        sb.append(", userId=").append(userId);
         sb.append("]");
         return sb.toString();
     }

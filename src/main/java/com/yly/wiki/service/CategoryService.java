@@ -9,7 +9,9 @@ import com.yly.wiki.req.CategoryQueryReq;
 import com.yly.wiki.req.CategorySaveReq;
 import com.yly.wiki.resp.CategoryResp;
 import com.yly.wiki.resp.PageResp;
+import com.yly.wiki.resp.UserLoginResp;
 import com.yly.wiki.util.CopyUtil;
+import com.yly.wiki.util.LoginUserContext;
 import com.yly.wiki.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +94,8 @@ public class CategoryService {
     public List<CategoryResp> all() {
         CategoryExample categoryExample = new CategoryExample();
         categoryExample.setOrderByClause("sort asc");
+        UserLoginResp user = LoginUserContext.getUser();
+        categoryExample.createCriteria().andUserIdEqualTo(user.getId());
         List<Category> categoryList = categoryMapper.selectByExample(categoryExample);
 
         // 列表复制

@@ -14,10 +14,8 @@ import com.yly.wiki.req.DocQueryReq;
 import com.yly.wiki.req.DocSaveReq;
 import com.yly.wiki.resp.DocResp;
 import com.yly.wiki.resp.PageResp;
-import com.yly.wiki.util.CopyUtil;
-import com.yly.wiki.util.RedisUtil;
-import com.yly.wiki.util.RequestContext;
-import com.yly.wiki.util.SnowFlake;
+import com.yly.wiki.resp.UserLoginResp;
+import com.yly.wiki.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -25,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -56,8 +55,9 @@ public class DocService {
     public PageResp<DocResp> list(DocQueryReq req) {
         DocExample docExample = new DocExample();
         docExample.setOrderByClause("sort asc");
-        DocExample.Criteria criteria = docExample.createCriteria();
         PageHelper.startPage(req.getPage(), req.getSize());
+        UserLoginResp user = LoginUserContext.getUser();
+        docExample.createCriteria().andUserIdEqualTo(user.getId());
         List<Doc> docList = docMapper.selectByExample(docExample);
 
         PageInfo<Doc> pageInfo = new PageInfo<>(docList);
@@ -130,12 +130,19 @@ public class DocService {
     }
 
     /**
-     * 查询所有分类
+     * 查询所有
      */
     public List<DocResp> all() {
         DocExample docExample = new DocExample();
         docExample.setOrderByClause("sort asc");
+        UserLoginResp user = LoginUserContext.getUser();
+        if(!ObjectUtils.isEmpty(user)){
+            docExample.createCriteria().andUserIdEqualTo(user.getId());
+        }
         List<Doc> docList = docMapper.selectByExample(docExample);
+        if(ObjectUtils.isEmpty(docList)){
+            docList = new ArrayList<>();
+        }
 
         // 列表复制
         List<DocResp> list = CopyUtil.copyList(docList, DocResp.class);
@@ -152,6 +159,8 @@ public class DocService {
     public List<DocResp> listByEbookId(String ebookId) {
         DocExample docExample = new DocExample();
         docExample.setOrderByClause("sort asc");
+        UserLoginResp user = LoginUserContext.getUser();
+        docExample.createCriteria().andUserIdEqualTo(user.getId());
         DocExample.Criteria criteria = docExample.createCriteria();
         criteria.andEbookIdEqualTo(ebookId);
         List<Doc> docs = docMapper.selectByExample(docExample);

@@ -151,6 +151,8 @@ insert into role (`role_id`,`role_name`) values ('0','默认用户');
 alter table user add roles varchar(200) default 0;
 
 
-#给文档和电子书表新加用户字段
+#给文档和电子书表,分类表新加用户字段
 alter table doc add user_id varchar(20) not null ;
 alter table ebook add user_id varchar(20) not null ;
+alter table category add user_id varchar(20) not null ;
+

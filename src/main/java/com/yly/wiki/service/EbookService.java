@@ -10,7 +10,9 @@ import com.yly.wiki.req.EbookQueryReq;
 import com.yly.wiki.req.EbookSaveReq;
 import com.yly.wiki.resp.EbookResp;
 import com.yly.wiki.resp.PageResp;
+import com.yly.wiki.resp.UserLoginResp;
 import com.yly.wiki.util.CopyUtil;
+import com.yly.wiki.util.LoginUserContext;
 import com.yly.wiki.util.SnowFlake;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -46,7 +48,8 @@ public class EbookService {
         if (!ObjectUtils.isEmpty(ebookReq.getCategory2Id())) {
             criteria.andCategory2IdEqualTo(ebookReq.getCategory2Id());
         }
-
+        UserLoginResp user = LoginUserContext.getUser();
+        criteria.andUserIdEqualTo(user.getId());
         List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
         //获取分页信息
         PageInfo<Ebook> ebookPageInfo = new PageInfo<>(ebookList);
