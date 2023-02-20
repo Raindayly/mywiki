@@ -10,7 +10,7 @@ public interface MyEbookMapper {
 
     void updateEbookInfo();
 
-    void getEbookStatistic();
+    void getEbookStatistic(String id);
 
 
 }

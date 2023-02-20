@@ -5,9 +5,9 @@
 
     <update id="updateEbookInfo">
         update ebook t1,(SELECT ebook_id,count(1) doc_count,sum(vote_count)
-            vote_count,sum(view_count) view_count from doc group by ebook_id) t2
+            vote_count,sum(view_count) view_count ,user_id from doc  group by ebook_id,user_id) t2
         set t1.view_count = t2.view_count,t1.vote_count = t2.vote_count,t1.doc_count = t2.doc_count
-        where t1.id = t2.ebook_id
+        where t1.id = t2.ebook_id and t2.user_id = t1.user_id
     </update>
     <select id="getEbookStatistic">
         select t1.`date` as `date`,
@@ -16,7 +16,7 @@
                sum(t1.view_increase) as voteIncrease,
                sum(t1.vote_increase) as voteIncrease,
         from ebook_snapshot t1
-        where t1.`date` >= date_sub(curdate(), interval 1 day),
+        where t1.`date` >= date_sub(curdate(), interval 1 day)  and t1.user_id = ${id},
         group by t1.`date`
         order by t1.`date` asc
     </select>

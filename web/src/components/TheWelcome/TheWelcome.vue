@@ -75,6 +75,7 @@
   import {computed, onMounted, ref} from "vue";
   import axios from "axios";
   import {homeData} from "@/components/TheWelcome/entity/homeData";
+  import store from "@/store";
 
   const voteSum = ref(0)
   const viewSum = ref(0)
@@ -114,7 +115,7 @@
 
   onMounted(() => {
     setTimeout(()=>{
-      axios.get("/statistics/sum").then((res) => {
+      axios.get(`/statistics/sumPersonally/${store.state.user.id}`).then((res) => {
         const data = res.data
         if(data.success) {
           spin1.value = true;
@@ -123,7 +124,7 @@
         }
       })
 
-      axios.get("/statistics/homeStatistics").then(res => {
+      axios.get(`/statistics/homeStatistics/${store.state.user.id}`).then(res => {
         const { data } = res
         if(data.success) {
           spin2.value = true;

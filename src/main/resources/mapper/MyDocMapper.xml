@@ -15,9 +15,23 @@
         select `id`, `name`, `password` from `test`
     </select>
     <select id="voteSum" resultType="Integer">
-        select sum(vote_count) from doc
+        select ifnull((select sum(vote_count) from doc),0)
     </select>
     <select id="viewSum" resultType="Integer">
-        select sum(view_count) from doc
+        select ifnull((select sum(view_count) from doc),0)
+    </select>
+    <select id="docSum" resultType="java.lang.Integer">
+        select count(*) from doc
+    </select>
+
+
+    <select id="voteSumPersonally" resultType="Integer">
+        select ifnull((select sum(vote_count) from doc where user_id = #{id}),0)
+    </select>
+    <select id="viewSumPersonally" resultType="Integer">
+        select ifnull((select sum(view_count) from doc where user_id = #{id}),0)
+    </select>
+    <select id="docSumPersonally" resultType="java.lang.Integer">
+        select count(*) from doc where user_id = ${id}
     </select>
 </mapper>

@@ -156,3 +156,4 @@ alter table doc add user_id varchar(20) not null ;
 alter table ebook add user_id varchar(20) not null ;
 alter table category add user_id varchar(20) not null ;
 
+alter table ebook_snapshot add user_id varchar(20) not null ;

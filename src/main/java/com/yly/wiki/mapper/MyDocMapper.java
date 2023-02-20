@@ -14,4 +14,10 @@ public interface MyDocMapper extends DocMapper {
     void increaseVoteCount(@Param("id") String id);
     Integer voteSum();
     Integer viewSum();
+    Integer docSum();
+
+
+    Integer voteSumPersonally(String id);
+    Integer viewSumPersonally(String id);
+    Integer docSumPersonally(String id);
 }

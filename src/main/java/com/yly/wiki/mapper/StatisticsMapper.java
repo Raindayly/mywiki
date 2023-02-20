@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface StatisticsMapper {
 
-    List<StatisticsResp> getStatistics();
+    List<StatisticsResp> getStatistics(String id);
 
-    List<StatisticsResp> getChart();
+    List<StatisticsResp> getChart(String id);
 }

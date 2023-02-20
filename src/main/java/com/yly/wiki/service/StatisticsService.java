@@ -27,7 +27,7 @@ public class StatisticsService {
     StatisticsMapper statisticsMapper;
 
     public HashMap sum(){
-        Integer docSum = docService.all().size();
+        Integer docSum = myDocMapper.docSum();
         Integer voteSum = myDocMapper.voteSum();
         Integer viewSum = myDocMapper.viewSum();
 
@@ -38,10 +38,22 @@ public class StatisticsService {
         return map;
     }
 
+    public HashMap sumPersonally(String id){
+        Integer docSum = myDocMapper.docSumPersonally(id);
+        Integer voteSum = myDocMapper.voteSumPersonally(id);
+        Integer viewSum = myDocMapper.viewSumPersonally(id);
+
+        HashMap<String, Integer> map = new HashMap<>();
+        map.put("docSum",docSum);
+        map.put("voteSum",voteSum);
+        map.put("viewSum",viewSum);
+        return map;
+    }
 
 
-    public List<StatisticsResp> getStatistics(){
-        List<StatisticsResp> statistics = statisticsMapper.getStatistics();
+
+    public List<StatisticsResp> getStatistics(String id){
+        List<StatisticsResp> statistics = statisticsMapper.getStatistics(id);
         if(statistics.size() == 1){
             Instant instant_yesterday = LocalDate.now().minusDays(1).atTime(LocalTime.MIDNIGHT).atZone(ZoneId.systemDefault()).toInstant();
             statistics.add(0,new StatisticsResp(Date.from(instant_yesterday),0,0,0,0));
@@ -56,8 +68,8 @@ public class StatisticsService {
     }
 
 
-    public List<StatisticsResp> getChart(){
-        return statisticsMapper.getChart();
+    public List<StatisticsResp> getChart(String id){
+        return statisticsMapper.getChart(id);
     }
 
 

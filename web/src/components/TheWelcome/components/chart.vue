@@ -21,6 +21,7 @@ import {
 import {onMounted, ref} from "vue";
 import {homeData} from "@/components/TheWelcome/entity/homeData";
 import axios from "axios";
+import store from "@/store";
 
 // 注册必须的组件
 echarts.use([
@@ -61,7 +62,7 @@ onMounted(() => {
   let el: any = document.getElementById('main')
   let myChart = echarts.init(el);
 
-  axios.get<ApiContent<homeData[]>>("/statistics/chart").then(res => {
+  axios.get<ApiContent<homeData[]>>(`/statistics/chart/${store.state.user.id}`).then(res => {
     let data = res.data
     if(data.success){
       chartData.value = res.data.content

@@ -5,6 +5,7 @@ import com.yly.wiki.resp.StatisticsResp;
 import com.yly.wiki.service.StatisticsService;
 import com.yly.wiki.websocket.WebSocketServer;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,9 +30,20 @@ public class StatisticsController {
      * 统计所有文档，点赞，阅读数，用户数
      */
     @GetMapping("/sum")
-    public CommonResp vote() {
+    public CommonResp sum() {
         CommonResp resp = new CommonResp<>();
         HashMap sum = statisticsService.sum();
+        resp.setContent(sum);
+        return resp;
+    }
+
+    /**
+     * 统计个人账号的所有文档，点赞，阅读数，用户数
+     */
+    @GetMapping("/sumPersonally/{id}")
+    public CommonResp sumPersonally(@PathVariable String id) {
+        CommonResp resp = new CommonResp<>();
+        HashMap sum = statisticsService.sumPersonally(id);
         resp.setContent(sum);
         return resp;
     }
@@ -44,10 +56,10 @@ public class StatisticsController {
      * [ ] 总点赞量
      * [ ] 点赞率
      */
-    @GetMapping("/homeStatistics")
-    public CommonResp getStatistics() {
+    @GetMapping("/homeStatistics/{id}")
+    public CommonResp getStatistics(@PathVariable String id) {
         CommonResp resp = new CommonResp<>();
-        List<StatisticsResp> statistics = statisticsService.getStatistics();
+        List<StatisticsResp> statistics = statisticsService.getStatistics(id);
         resp.setContent(statistics);
         return resp;
     }
@@ -58,10 +70,10 @@ public class StatisticsController {
      *
      */
 
-    @GetMapping("/chart")
-    public CommonResp getChart() {
+    @GetMapping("/chart/{id}")
+    public CommonResp getChart(@PathVariable String id) {
         CommonResp resp = new CommonResp<>();
-        List<StatisticsResp> statistics = statisticsService.getChart();
+        List<StatisticsResp> statistics = statisticsService.getChart(id);
         resp.setContent(statistics);
         return resp;
     }
