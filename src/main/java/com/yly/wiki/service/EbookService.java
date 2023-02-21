@@ -77,7 +77,7 @@ public class EbookService {
             ebook.setUserId(user.getId());
             ebookMapper.insert(ebook);
         }else {
-            ebookMapper.updateByPrimaryKey(ebook);
+            ebookMapper.updateByPrimaryKeySelective(ebook);
         }
     }
 

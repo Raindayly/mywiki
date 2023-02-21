@@ -18,7 +18,7 @@
         where t1.`date` = curdate()
           and t1.ebook_id = t2.id and t1.user_id = t2.user_id;
 
-        update ebook_snapshot t1 left join (select ebook_id, view_count, vote_count
+        update ebook_snapshot t1 left join (select ebook_id, view_count, vote_count,user_id
             from ebook_snapshot
             where `date` = date_sub(curdate(), interval 1 day)) t2
         on t1.ebook_id = t2.ebook_id and t1.user_id = t2.user_id
